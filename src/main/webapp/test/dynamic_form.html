@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Dynamic form</title>
+<script src="../js/require.js"> </script>
+<script src="../js/requireconfig.js"> </script>
+
+<style type="text/css">
+label{
+width: 300px;
+font-family: arial; 
+display: inline-block;
+box-sizing: border-box;
+}
+input,select{
+width: 150px;
+padding: 0;
+box-sizing: border-box;
+}
+.even-odd-container{
+
+}
+.even-odd-container div{
+box-sizing: border-box;
+}
+.fieldbox{
+min-width: 450px;
+float:left;
+padding: 5px;
+margin: 0px;
+} 
+.fieldbox label{
+float: left;
+display: inline-block;
+
+}
+</style>
+<script type="text/javascript">
+define('df',['app/cssloader','jqueryui', 'jsrender'],function(cssloader){
+	cssloader.loadCss(['jqueryui'],'',null);
+	var data = [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5},
+	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20}];
+	
+	var model = [
+	             {name: "name", type: "string", capturetype: "text", displaytype: "span", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "email", type: "string", capturetype: "email", displaytype: "span", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "dob", type: "string", capturetype: "datepicker", displaytype: "span", label: "Date Of Birth", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "span", label: "Married", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "span", label: "Num Cars", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
+	            ];
+	var schemaReader = {
+			root: "",
+			meta: "",
+			datatype: "json",
+			items: data,
+			resultFields: [{name: "",  mapping: "" /*can be xpath,json path or javascript function*/}]	
+	}; 
+	var datasource = {
+				model: model,
+				reader: schemaReader,
+				
+				options:{
+					url:"",
+					editurl: "",
+					cellediturl: "",
+					filter: [],
+					filterType: "remote",
+					sort: []
+				},
+				i18n: {},
+				validation: {},
+				paging :{ 
+					pagingtype: "remote",
+					offset: 0,
+					limit: 1
+				},
+				get: function (prop){
+					return schemaReader.items[this.paging.offset][prop];
+				}
+				
+		  };
+	
+	var panel_fields = ["name","email","dob","ismarried"];
+	
+	function createViewController(containerEl, datasource, mode){
+		$(containerEl).addClass("even-odd-container");
+		var $form = $(containerEl);
+		$form.empty();
+		
+		//create fields
+		 $.each(datasource.model, function(i,field){
+			 if(field.capturetype == "datepicker" ){
+				 
+				var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+			 }else{
+				 
+				var html =  $.templates("#tmpl_text_"+mode).render(field);
+					$form.append(html); 
+			 }
+				 
+		 });
+		 
+		//populate data
+		 $.each(datasource.model, function(i,field){
+			var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+			
+			if(fieldWidgets.data("spine-type") == "datepicker"){
+				fieldWidgets.val( datasource.get(field.name) )
+			}else {
+				fieldWidgets.val( datasource.get(field.name) );
+			}
+			if(mode == "view"){
+			if(fieldWidgets.data("spine-type") == "datepicker"){
+				fieldWidgets.text( datasource.get(field.name) )
+			}else {
+				fieldWidgets.text( datasource.get(field.name) );
+			}
+			}
+			
+		 });
+	}
+	createViewController("#dynaform",datasource, "view");
+	
+	return {
+		data: data, model: model, datasource: datasource, createViewController: createViewController
+	}
+});
+var x = null;
+require(['df'], function(y){ x = y;});
+</script>	
+<script type="text/template" id="tmpl_datepicker_edit">
+<div class="fieldbox">	<label for="caption">{{:label}} DT</label> <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" /></div>
+</script>
+<script type="text/template" id="tmpl_text_edit">
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" value="Field Details" /></div>
+</script>
+<script type="text/template" id="tmpl_datepicker_view">
+<div class="fieldbox">	<label for="caption">{{:label}} DT</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" ></span></div>
+</script>
+<script type="text/template" id="tmpl_text_view">
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}" value="Field Details" ></span></div>
+</script>
+
+</head>
+
+<body>
+	
+	<div id="dynaform"></div>
+</body>
+</html>
