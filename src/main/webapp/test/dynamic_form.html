@@ -37,10 +37,14 @@ display: inline-block;
 }
 </style>
 <script type="text/javascript">
-define('df',['app/cssloader','jqueryui', 'jsrender'],function(cssloader){
+define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonpath'],function(cssloader){
 	cssloader.loadCss(['jqueryui'],'',null);
-	var data = [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5},
-	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20}];
+	var data = {
+			page: 1,
+			total: 20, 
+			data: [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5},
+	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20}]
+	};
 	
 	var model = [
 	             {name: "name", type: "string", capturetype: "text", displaytype: "span", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
@@ -49,38 +53,49 @@ define('df',['app/cssloader','jqueryui', 'jsrender'],function(cssloader){
 	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "span", label: "Married", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "span", label: "Num Cars", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
 	            ];
-	var schemaReader = {
-			root: "",
-			meta: "",
-			datatype: "json",
-			items: data,
-			resultFields: [{name: "",  mapping: "" /*can be xpath,json path or javascript function*/}]	
-	}; 
-	var datasource = {
-				model: model,
-				reader: schemaReader,
+	var schemaReader = $.widget('uix.jsonreader',{
+			options:{
+				rootList: "data",
+				meta: "",
+				datatype: "json",
+				items: [],
+				resultFields: [{key: "name",  mapping: "" /*can be xpath,json path or javascript function*/}]
+			},
+			read: function(obj){
+				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
+				return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
+			}
+		}); 
+	$.widget("uix.datasource",$.ui.dataview,  {
 				
 				options:{
+					model: model,
+					reader: schemaReader,
+					source: {},
 					url:"",
 					editurl: "",
 					cellediturl: "",
 					filter: [],
 					filterType: "remote",
-					sort: []
+					sort: [],
+					i18n: {},
+					validation: {},
+					paging :{ 
+						pagingtype: "remote",
+						offset: 0,
+						limit: 1
+					}
 				},
-				i18n: {},
-				validation: {},
-				paging :{ 
-					pagingtype: "remote",
-					offset: 0,
-					limit: 1
+				_init: function(){
+					this.option(this.options);
+					this.results = [];
 				},
 				get: function (prop){
 					return schemaReader.items[this.paging.offset][prop];
 				}
 				
-		  };
-	
+		  });
+	var datasource = $.uix.datasource();
 	var panel_fields = ["name","email","dob","ismarried"];
 	
 	function createViewController(containerEl, datasource, mode){
@@ -121,10 +136,90 @@ define('df',['app/cssloader','jqueryui', 'jsrender'],function(cssloader){
 			
 		 });
 	}
-	createViewController("#dynaform",datasource, "view");
+	//createViewController("#dynaform",datasource, "view");
+	
+	
+	/// <summary>
+	/// wijdatasource ArrayReader reads from a array and processes items.
+	/// </summary>
+	wijarrayreader = function (fields) {
+		// this.fields to store the fields info
+
+		// Add for parse objectValue options for jUICE. D.H
+		if ($.isFunction(window["wijmoASPNetParseOptions"])) {
+			wijmoASPNetParseOptions(fields);
+		}
+
+		if ($.isArray(fields)) {
+			this.fields = fields;
+		}
+	};
+	window.wijarrayreader = wijarrayreader;
+
+	$.extend(wijarrayreader.prototype, {
+		read: function (datasource) {
+			/// <summary>
+			/// Starts reading data.
+			/// </summary>
+			/// <param name="datasource" type="wijdatasource">
+			/// The wijdatasource using this DataReader.
+			/// </param>
+
+			// convert the raw data of wijdatasource
+			if ($.isArray(datasource.data)) {
+				datasource.items = this._map(datasource.data);
+			}
+			else {
+				datasource.items = [];
+			}
+		},
+
+		_map: function (data) {
+			var self = this, arr = [];
+			if (self.fields === undefined || self.fields.length === 0) {
+				$.extend(true, arr, data);
+				return arr;
+			}
+			else {
+				$.each(data, function (index, value) {
+					var i = {};
+					$.each(self.fields, function (index, field) {
+						// mapping property is a function,
+						// the return value will be used as value.
+
+						//handle the juice
+						if (field.mapping && typeof field.mapping && window[field.mapping]) {
+							field.mapping = window[field.mapping];
+						}
+
+						if ($.isFunction(field.mapping)) {
+							i[field.name] = field.mapping(value);
+							return true;
+						}
+						// use string field mapping or number index mapping.
+						var mapping = field.mapping !== undefined ?
+											field.mapping : field.name,
+						v = value[mapping];
+						if (v === undefined) {
+							if (field.defaultValue !== undefined) {
+								v = field.defaultValue;
+							}
+							else {
+								v = value;
+							}
+						}
+						i[field.name] = v;
+					});
+					arr.push(i);
+				});
+			}
+			return arr;
+		}
+	});
+
 	
 	return {
-		data: data, model: model, datasource: datasource, createViewController: createViewController
+		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController
 	}
 });
 var x = null;

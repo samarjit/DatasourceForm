@@ -29,13 +29,15 @@ require.config({
         jqueryvalidation: '../js/plugins/jquery.validate.min',
         additionalvalidation: '../js/plugins/additional-validation',
         jquerypp: '../js/plugins/jquerypp.custom',
-        screenjs:"../js/screenjs"
+        screenjs:"../js/screenjs",
+        jsonpath: "../js/plugins/jsonpath-0.8.0"
     },
     shim: {
         jqueryui: {
            // exports: "$",
             deps: ['jquery']
         },
+        uidataview: ['jqueryui'],
         uigrid: {
         	//exports: "$", 
         	deps:[
