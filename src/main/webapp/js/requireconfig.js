@@ -6,8 +6,8 @@ require.config({
         lib: '../js/lib',
         plugins: '../js/plugins',
         jquery: '../js/lib/jquery-1.9.1',
-        jqueryui:   '../js/lib/jquery-ui-1.10.1',
-      //  jqueryui:   'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui',
+         jqueryui:   '../js/lib/jquery-ui-1.10.1',
+       // jqueryui:   'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui',
         uigridmain: 'http://view.jqueryui.com/grid/ui/jquery.ui.grid',
         uigrid:'../js/plugins/mydataview',
         jqgrid: '../js/plugins/grid.locale-en',
@@ -16,8 +16,8 @@ require.config({
         uidataview: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataview',
         uidataviewlocal: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataviewlocal',
         uiobservable: 'http://view.jqueryui.com/grid/ui/jquery.ui.observable',
-        rcanjsmain:  'http://canjs.us/release/1.1.5/can.jquery',
-        rcanjs: 'http://canjs.us/release/latest/can.view.mustache',
+        rcanjsmain:  'http://canjs.com/release//1.1.6/can.jquery',
+        rcanjs: 'http://canjs.com/release/latest/can.view.mustache',
         canjsmain:  '../js/lib/can.jquery',
         canjs: '../js/lib/can.view.mustache',
         jsrender: 'http://www.jsviews.com/download/jsrender',
@@ -29,6 +29,7 @@ require.config({
         jqueryvalidation: '../js/plugins/jquery.validate.min',
         additionalvalidation: '../js/plugins/additional-validation',
         jquerypp: '../js/plugins/jquerypp.custom',
+        canui: '../js/plugins/canui',
         screenjs:"../js/screenjs",
         jsonpath: "../js/plugins/jsonpath-0.8.0"
     },
@@ -94,6 +95,7 @@ require.config({
         jquerytmpl: ['jquery'],
         jqueryvalidation:['jquery'],
         additionalvalidation: ['jqueryvalidation'],
-        jquerypp: ['jquery']
+        jquerypp: ['jquery'],
+        canui: ['jquery','canjs','jquerypp']
     }
 });

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
@@ -7,6 +7,10 @@
 <script src="../js/requireconfig.js"> </script>
 
 <style type="text/css">
+.ui-widget, body{
+font-size: .9em!important;
+}
+
 label{
 width: 300px;
 font-family: arial; 
@@ -42,110 +46,250 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 	var data = {
 			page: 1,
 			total: 20, 
-			data: [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5},
-	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20}]
+			data: [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5, num_child: 2},
+	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20, num_child: 3}]
 	};
 	
 	var model = [
-	             {name: "name", type: "string", capturetype: "text", displaytype: "span", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "email", type: "string", capturetype: "email", displaytype: "span", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "dob", type: "string", capturetype: "datepicker", displaytype: "span", label: "Date Of Birth", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "span", label: "Married", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "span", label: "Num Cars", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
+	             {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "dob", type: "string", capturetype: "datepicker", displaytype: "displayText", label: "Date Of Birth", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "displayText", label: "Married", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "displayText", label: "Num Cars", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_child", type: "int", capturetype: "spinner", displaytype: "displayText", label: "Num Child", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
 	            ];
-	var schemaReader = $.widget('uix.jsonreader',{
-			options:{
-				rootList: "data",
-				meta: "",
-				datatype: "json",
-				items: [],
-				resultFields: [{key: "name",  mapping: "" /*can be xpath,json path or javascript function*/}]
-			},
-			read: function(obj){
-				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
-				return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
-			}
-		}); 
-	$.widget("uix.datasource",$.ui.dataview,  {
-				
-				options:{
-					model: model,
-					reader: schemaReader,
-					source: {},
-					url:"",
-					editurl: "",
-					cellediturl: "",
-					filter: [],
-					filterType: "remote",
-					sort: [],
-					i18n: {},
-					validation: {},
-					paging :{ 
-						pagingtype: "remote",
-						offset: 0,
-						limit: 1
-					}
-				},
-				_init: function(){
-					this.option(this.options);
-					this.results = [];
-				},
-				get: function (prop){
-					return schemaReader.items[this.paging.offset][prop];
-				}
-				
-		  });
-	var datasource = $.uix.datasource();
-	var panel_fields = ["name","email","dob","ismarried"];
-	
-	function createViewController(containerEl, datasource, mode){
-		$(containerEl).addClass("even-odd-container");
-		var $form = $(containerEl);
-		$form.empty();
-		
-		//create fields
-		 $.each(datasource.model, function(i,field){
-			 if(field.capturetype == "datepicker" ){
-				 
-				var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-			 }else{
-				 
-				var html =  $.templates("#tmpl_text_"+mode).render(field);
-					$form.append(html); 
-			 }
-				 
-		 });
-		 
-		//populate data
-		 $.each(datasource.model, function(i,field){
-			var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
-			
-			if(fieldWidgets.data("spine-type") == "datepicker"){
-				fieldWidgets.val( datasource.get(field.name) )
-			}else {
-				fieldWidgets.val( datasource.get(field.name) );
-			}
-			if(mode == "view"){
-			if(fieldWidgets.data("spine-type") == "datepicker"){
-				fieldWidgets.text( datasource.get(field.name) )
-			}else {
-				fieldWidgets.text( datasource.get(field.name) );
-			}
-			}
-			
-		 });
-	}
-	//createViewController("#dynaform",datasource, "view");
-	
-	
-	/// <summary>
-	/// wijdatasource ArrayReader reads from a array and processes items.
-	/// </summary>
-	wijarrayreader = function (fields) {
-		// this.fields to store the fields info
+	//em px converter from filamentgroup
+	$.fn.toEm = function(settings){
+		settings = jQuery.extend({
+			scope: 'body'
+		}, settings);
+		var that = parseInt(this[0],10),
+			scopeTest = jQuery('<div style="display: none; font-size: 1em; margin: 0; padding:0; height: auto; line-height: 1; border:0;">&nbsp;</div>').appendTo(settings.scope),
+			scopeVal = scopeTest.height();
+		scopeTest.remove();
+		return (that / scopeVal).toFixed(8) + 'em';
+	};
 
-		// Add for parse objectValue options for jUICE. D.H
+
+	$.fn.toPx = function(settings){
+		settings = jQuery.extend({
+			scope: 'body'
+		}, settings);
+		var that = parseFloat(this[0]),
+			scopeTest = jQuery('<div style="display: none; font-size: 1em; margin: 0; padding:0; height: auto; line-height: 1; border:0;">&nbsp;</div>').appendTo(settings.scope),
+			scopeVal = scopeTest.height();
+		scopeTest.remove();
+		return Math.round(that * scopeVal) + 'px';
+	};
+	
+		var spineDatepicker =  {
+	 		fromElm: null,
+	 		name: "datepicker",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				fieldWidgets.datepicker();
+	 		},
+	 		getValue: function($el){
+	 			return $el.val();
+	 		},
+	 		setValue: function($el, val){
+	 			$el.val(val);
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+	 	
+		var spineSpinner =  {
+	 		fromElm: null,
+	 		name: "spinner",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_spinner_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				 
+				//var fontSize = $(.9).toPx();
+				
+				fieldWidgets.spinner();
+			 	fieldWidgets.height(20);
+				fieldWidgets.outerHeight(fieldWidgets.parent().height());
+				//fieldWidgets.parent().css("font-size","0px");
+				fieldWidgets.outerWidth(150-24);
+
+				/*
+				fieldWidgets.parent().css("width","150px");
+				fieldWidgets.css("font-size",".8em");
+				fieldWidgets.css("font-size",fontSize);
+				
+				//another way to position correctly
+				//fieldWidgets.css("position","absolute");
+				//fieldWidgets.css("top","0");
+				
+				*/
+				//fieldWidgets.css("line-height",".8em"); //not required
+				fieldWidgets.css("margin-top","0px");
+				fieldWidgets.css("margin-bottom","0px");
+				fieldWidgets.css("margin-left","2px");
+				
+				fieldWidgets.css("vertical-align","top");
+				
+				
+			 
+	 		},
+	 		getValue: function($el){
+	 			return $el.val();
+	 		},
+	 		setValue: function($el, val){
+	 			$el.val(val);
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+	 	
+		var spineSlider =  {
+	 		fromElm: null,
+	 		name: "slider",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				fieldWidgets.slider();
+				
+	 		},
+	 		getValue: function($el){
+	 			return $el.data('ui-slider').value();
+	 		},
+	 		setValue: function($el, val){
+	 			$el.data('ui-slider').value(val);
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+	 	
+		var spineText =  {
+	 		fromElm: null,
+	 		name: "text",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_text_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				 
+	 		},
+	 		getValue: function($el){
+	 			return $el.val();
+	 		},
+	 		setValue: function($el, val){
+	 			$el.val(val);
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+		
+		var spineDisplayText =  {
+	 		fromElm: null,
+	 		name: "displayText",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_text_view").render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				 
+	 		},
+	 		getValue: function($el){
+	 			return $el.text();
+	 		},
+	 		setValue: function($el, val){
+	 			$el.text(val);
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+	 	
+		$.widgetList = {};
+	 	$.widgetList ["datepicker"] =  spineDatepicker;
+	 	$.widgetList ["spinner"] =  spineSpinner;
+	 	$.widgetList ["slider"] =  spineSlider;
+	 	$.widgetList ["text"] =  spineText;
+	 	$.widgetList ["email"] =  spineText;
+	 	$.widgetList ["displayText"] =  spineDisplayText;
+	 	
+	 	
+	 	var widgetHelper = {
+			render: function ($form, field, mode  ){
+				var wiz = null ;
+				if(mode == 'edit'){
+					wiz = $.widgetList [field.capturetype]
+				}else{
+					//view
+					wiz = $.widgetList [field.displaytype];
+				}
+				if(wiz == null || wiz == ""){
+					console.log('render: capturetype/displaytype:'+ field.capturetype + " not found in widget registry for mode="+mode);
+				}else{
+					wiz.render($form, field, mode)
+				}
+	 		},
+	 		getValue: function($el){
+	 			var wizType = $el.data("spine-type");
+	 			if(wizType == null || wizType == ""){
+					console.log('getValue: wizType: '+ wizType + " not found in data-spine-type");
+				}else{
+					var wiz = $.widgetList [wizType];
+					if(wiz == null || wiz == ""){
+						console.log('getValue: wizType: '+ wizType + " not found in widget registry");
+					}else{
+						console.log('getValue: wizType: '+ wizType );
+						return wiz.getValue($el);
+					}
+				}
+	 			return null;
+	 		},
+	 		setValue: function($el, val){
+	 			var wizType = $el.data("spine-type");
+	 			if(wizType == null || wizType == ""){
+					console.log('setValue: wizType: '+ wizType + " not found in data-spine-type");
+				}else{
+					var wiz = $.widgetList [wizType];
+					if(wiz == null || wiz == ""){
+						console.log('setValue: wizType: '+ wizType + " not found in widget registry");
+					}else{
+						wiz.setValue($el, val);
+					}
+					 
+				}
+	 			
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
+	 	
+	 
+	ArrayReader = function (fields) {
+		
 		if ($.isFunction(window["wijmoASPNetParseOptions"])) {
 			wijmoASPNetParseOptions(fields);
 		}
@@ -154,18 +298,10 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 			this.fields = fields;
 		}
 	};
-	window.wijarrayreader = wijarrayreader;
+	window.ArrayReader = ArrayReader;
 
-	$.extend(wijarrayreader.prototype, {
+	$.extend(ArrayReader.prototype, {
 		read: function (datasource) {
-			/// <summary>
-			/// Starts reading data.
-			/// </summary>
-			/// <param name="datasource" type="wijdatasource">
-			/// The wijdatasource using this DataReader.
-			/// </param>
-
-			// convert the raw data of wijdatasource
 			if ($.isArray(datasource.data)) {
 				datasource.items = this._map(datasource.data);
 			}
@@ -186,8 +322,12 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 					$.each(self.fields, function (index, field) {
 						// mapping property is a function,
 						// the return value will be used as value.
-
+						
 						//handle the juice
+						if($.type(field) == "string" ) {
+							var tmp = field;
+							field = {name: tmp, mapping: tmp};
+						}
 						if (field.mapping && typeof field.mapping && window[field.mapping]) {
 							field.mapping = window[field.mapping];
 						}
@@ -216,7 +356,171 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 			return arr;
 		}
 	});
-
+	
+	function schemaReader (newoptions) {
+			this.options = {
+				rootList: "data",
+				meta: "",
+				datatype: "json",
+				items: [],
+				resultFields: model//[{name: "name",  mapping: "name" /*can be xpath,json path or javascript function*/}, {name: "email"}]
+			};
+			
+			$.extend(this.options, newoptions);
+			
+			this.read = function(obj){
+				//debugger; 
+				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
+				//return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
+				var datasource = {data: temp} ;
+				 new ArrayReader(this.options.resultFields).read(datasource);
+				return datasource.items;
+			}
+	}; 
+	
+	$.widget("uix.datasource",$.ui.dataview,  {
+				
+				options:{
+					model: model,
+					reader: new schemaReader(),
+					source: null,
+					url:"",
+					editurl: "",
+					cellediturl: "",
+					filter: [],
+					sort: [],
+					i18n: {},
+					validation: {},
+					paging :{ 
+						offset: 0,
+						limit: 1
+					},
+					dataLocation: "local",
+					pagingtype: "remote",
+					filterType: "remote"
+				},
+				_init: function(){
+					this.option(this.options);
+					this.results = [];
+					this._fetch();
+				},
+				_fetch: function(){
+					if(this.options.dataLocation == "local"){
+						this.results = this.options.reader.read(this.options.source); 
+					}else if(this.options.dataLocation == "remote"){
+						
+					}
+				},
+				refresh: function(){
+					this._fetch();
+				},
+				get: function (prop){
+					if(this.options.paging.offset > this.results.length -1){
+						console.log("ERROR: datasource: trying to get offset more than result set length, selecting last object in result array");
+						this.options.paging.offset = this.results.length -1;
+					}
+					if(this.results[this.options.paging.offset] == null){
+						return "";
+					}
+					return this.results[this.options.paging.offset][prop];
+				},
+				save: function(){
+					//retrieve data
+					var that = this;
+					 $.each(datasource.options.model, function(i,field){
+						// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
+						var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+						/*
+						if(fieldWidgets.data("spine-type") == "datepicker"){
+							that.results[that.options.paging.offset][field.name] = widgetHelper.getValue(fieldWidgets); 
+						}else if(fieldWidgets.data("spine-type") == "slider"){
+							that.results[that.options.paging.offset][field.name] =fieldWidgets.slider("value"  );
+						}else if(fieldWidgets.data("spine-type") == "spinner"){
+							that.results[that.options.paging.offset][field.name] =fieldWidgets.spinner("value"  );
+						}else {
+							that.results[that.options.paging.offset][field.name] = fieldWidgets.val();
+						}
+						*/
+						that.results[that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
+						
+					 });
+					
+					console.log("saving ... "+JSON.stringify(this.results));
+				}
+				
+	});
+	
+	var datasource = $.uix.datasource({source: data});
+	var panel_fields = ["name","email","dob","ismarried"];
+	
+	
+	
+ 	
+ 	
+	function createViewController(containerEl, datasource, mode){
+		$(containerEl).addClass("even-odd-container");
+		var $form = $(containerEl);
+		$form.empty();
+		
+		datasource.refresh();
+		
+		//create fields
+		 $.each(datasource.options.model, function(i, field){
+			// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld.name) return i; });
+			widgetHelper.render($form, field, mode); 
+			/*if(field.capturetype == "datepicker" ){
+				 
+				  
+				
+			 }else if(field.capturetype == "spinner" ){
+				 var html =  $.templates("#tmpl_number_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+					$form.append(html);	
+					var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+					fieldWidgets.spinner();
+			 }else if(field.capturetype == "slider" ){
+				 var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+					$form.append(html);	
+					var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+					//fieldWidgets.prop("type","text");
+					fieldWidgets.slider();
+			 
+			 }else{
+				 
+				var html =  $.templates("#tmpl_text_"+mode).render(field);
+					$form.append(html); 
+			 }*/
+				 
+		 });
+		 
+		//populate data
+		 $.each(datasource.options.model, function(i,field){
+			// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
+			var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+			widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+			/*if(fieldWidgets.data("spine-type") == "datepicker"){		widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+				
+			}else if(fieldWidgets.data("spine-type") == "slider"){				fieldWidgets.slider("value",datasource.get(field.name) );
+				
+			}else if(fieldWidgets.data("spine-type") == "spinner"){				fieldWidgets.spinner("value",datasource.get(field.name) );
+				
+			}else { 			fieldWidgets.val( datasource.get(field.name) );
+			}
+			
+			
+			if(mode == "view"){
+				if(fieldWidgets.data("spine-type") == "datepicker"){
+					fieldWidgets.text( datasource.get(field.name) )
+				}else {
+					fieldWidgets.text( datasource.get(field.name) );
+				}
+			}
+			*/
+			
+		 });
+	}
+	
+	
+	createViewController("#dynaform",datasource, "edit");
 	
 	return {
 		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController
@@ -226,22 +530,40 @@ var x = null;
 require(['df'], function(y){ x = y;});
 </script>	
 <script type="text/template" id="tmpl_datepicker_edit">
-<div class="fieldbox">	<label for="caption">{{:label}} DT</label> <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" /></div>
+<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" /></div>
 </script>
+ 
 <script type="text/template" id="tmpl_text_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" value="Field Details" /></div>
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="text" value="Field Details" /></div>
 </script>
-<script type="text/template" id="tmpl_datepicker_view">
-<div class="fieldbox">	<label for="caption">{{:label}} DT</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" ></span></div>
-</script>
+
 <script type="text/template" id="tmpl_text_view">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}" value="Field Details" ></span></div>
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="displayText" value="Field Details" ></span></div>
 </script>
+
+<script type="text/template" id="tmpl_number_edit">
+<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" /></div>
+</script>
+
+<script type="text/template" id="tmpl_spinner_edit">
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="spinner"  value="Field Details" /></div>
+</script>
+ 
+<script type="text/template" id="tmpl_slider_edit">
+<div class="fieldbox">	<label for="caption">{{:label}}</label> <div type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" ></div></div>
+</script>
+
+<script type="text/template" id="tmpl_check_edit">
+<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" ></span></div>
+</script>
+
+
 
 </head>
 
 <body>
 	
 	<div id="dynaform"></div>
+	 
 </body>
 </html>
