@@ -13,8 +13,9 @@ require.config({
         jqgrid: '../js/plugins/grid.locale-en',
         jqgridmain:'../js/plugins/jquery.jqGrid.src',
         jquerytmpl: 'http://view.jqueryui.com/grid/external/jquery.tmpl',
-        uidataview: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataview',
-        uidataviewlocal: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataviewlocal',
+        uidataview: '../js/plugins/jquery.ui.dataview',
+        uidataviewlocal: '../js/plugins/jquery.ui.dataviewlocal',
+       // uidataviewlocal: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataviewlocal',
         uiobservable: 'http://view.jqueryui.com/grid/ui/jquery.ui.observable',
         rcanjsmain:  'http://canjs.com/release//1.1.6/can.jquery',
         rcanjs: 'http://canjs.com/release/latest/can.view.mustache',
@@ -31,7 +32,10 @@ require.config({
         jquerypp: '../js/plugins/jquerypp.custom',
         canui: '../js/plugins/canui',
         screenjs:"../js/screenjs",
-        jsonpath: "../js/plugins/jsonpath-0.8.0"
+        jsonpath: "../js/plugins/jsonpath-0.8.0",
+        gridpager: "../js/plugins/grid-pager",
+        gridfilter: "../js/plugins/grid-filter",
+        gridfilterform: "../js/plugins/grid-filter-form"
     },
     shim: {
         jqueryui: {
@@ -39,6 +43,7 @@ require.config({
             deps: ['jquery']
         },
         uidataview: ['jqueryui'],
+        uidataviewlocal: ['jqueryui','uidataview'],
         uigrid: {
         	//exports: "$", 
         	deps:[
@@ -96,6 +101,9 @@ require.config({
         jqueryvalidation:['jquery'],
         additionalvalidation: ['jqueryvalidation'],
         jquerypp: ['jquery'],
-        canui: ['jquery','canjs','jquerypp']
+        canui: ['jquery','canjs','jquerypp'],
+        gridpager: ['jqueryui'],
+        gridfilter: ['jqueryui'],
+        gridfilterform: ['jqueryui']
     }
 });

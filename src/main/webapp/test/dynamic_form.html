@@ -41,7 +41,7 @@ display: inline-block;
 }
 </style>
 <script type="text/javascript">
-define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonpath'],function(cssloader){
+define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform'],function(cssloader){
 	cssloader.loadCss(['jqueryui'],'',null);
 	var data = {
 			page: 1,
@@ -54,8 +54,8 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 	             {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 	             {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 	             {name: "dob", type: "string", capturetype: "datepicker", displaytype: "displayText", label: "Date Of Birth", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "displayText", label: "Married", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
-	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "displayText", label: "Num Cars", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "displayText", label: "Married", searchable: false, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "displayText", label: "Num Cars", searchable: false, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 	             {name: "num_child", type: "int", capturetype: "spinner", displaytype: "displayText", label: "Num Child", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
 	            ];
 	//em px converter from filamentgroup
@@ -113,25 +113,27 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 				$form.append(html);	
 				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
 				 
-				//var fontSize = $(.9).toPx();
+				var fontSize = $(.9).toPx();
 				
 				fieldWidgets.spinner();
-			 	fieldWidgets.height(20);
+			 	//fieldWidgets.height(20);
+			 	//fieldWidgets.parent().height(20)
 				fieldWidgets.outerHeight(fieldWidgets.parent().height());
-				//fieldWidgets.parent().css("font-size","0px");
 				fieldWidgets.outerWidth(150-24);
 
-				/*
+				
+				fieldWidgets.parent().css("font-size","0px");
 				fieldWidgets.parent().css("width","150px");
 				fieldWidgets.css("font-size",".8em");
 				fieldWidgets.css("font-size",fontSize);
-				
+				/*
 				//another way to position correctly
 				//fieldWidgets.css("position","absolute");
 				//fieldWidgets.css("top","0");
 				
 				*/
 				//fieldWidgets.css("line-height",".8em"); //not required
+				
 				fieldWidgets.css("margin-top","0px");
 				fieldWidgets.css("margin-bottom","0px");
 				fieldWidgets.css("margin-left","2px");
@@ -224,6 +226,46 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 	 			
 	 		}
 	 	};
+		
+		var spineCheckbox =  {
+	 		fromElm: null,
+	 		name: "checkbox",
+	 		render: function ($form, field,  mode  ){
+	 			var html =  $.templates("#tmpl_check_edit").render(field); // can.view("#tmpl_datepicker_"+mode, field);
+				$form.append(html);	
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				fieldWidgets.css("margin","0px");
+	 		},
+	 		getValue: function($el){
+	 			 if($el.is(":checked")){
+	 				return $el.val();
+	 			 }else{
+	 				 return "";
+	 			 }
+	 		},
+	 		setValue: function($el, val){
+	 			$el.val(val);
+	 			console.log("check value ==== "+val)
+	 			
+	 			if(val == 'y' )$el[0].checked = true;
+	 			if(val == 'Y' )$el[0].checked = true;
+	 			if(/true/i.test(val) )$el[0].checked = true;
+	 			if(val == 'Yes' )$el[0].checked = true;
+	 			if(val == true )$el[0].checked = true;
+	 			
+	 			if(val == 'n' )$el[0].checked = false
+	 			if(val == 'N' )$el[0].checked = false
+	 			if(/false/i.test(val) )$el[0].checked = false
+	 			if(val == 'No' )$el[0].checked = false
+	 			if(val == false )$el[0].checked = false
+	 		},
+	 		showError: function($el){
+	 			
+	 		},
+	 		showTooltip: function($el){
+	 			
+	 		}
+	 	};
 	 	
 		$.widgetList = {};
 	 	$.widgetList ["datepicker"] =  spineDatepicker;
@@ -232,17 +274,39 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 	 	$.widgetList ["text"] =  spineText;
 	 	$.widgetList ["email"] =  spineText;
 	 	$.widgetList ["displayText"] =  spineDisplayText;
+	 	$.widgetList ["checkbox"] =  spineCheckbox;
 	 	
 	 	
 	 	var widgetHelper = {
 			render: function ($form, field, mode  ){
 				var wiz = null ;
 				if(mode == 'edit'){
-					wiz = $.widgetList [field.capturetype]
+					if(field.capturetype == null || field.capturetype == ""){
+						console.log('render: capturetype:'+ field.capturetype + " not found in model using text");
+						field.capturetype = "text";
+					}
+					
+					wiz = $.widgetList [field.capturetype];
+					
+					if(wiz == null || wiz == ""){
+						console.log('render: capturetype:'+ field.capturetype + " is invalid using default text");
+						wiz = $.widgetList ["text"];
+					}
 				}else{
 					//view
+					if(field.displaytype == null || field.displaytype == ""){
+						console.log('render: displaytype:'+ field.capturetype + " not found in model using displayText");
+						field.displaytype = "displayText";
+					}
+					
 					wiz = $.widgetList [field.displaytype];
+					
+					if(wiz == null || wiz == ""){
+						console.log('render: displaytype:'+ field.capturetype + " is invalid, using displayText");
+						wiz = $.widgetList ["text"];
+					}
 				}
+				
 				if(wiz == null || wiz == ""){
 					console.log('render: capturetype/displaytype:'+ field.capturetype + " not found in widget registry for mode="+mode);
 				}else{
@@ -378,12 +442,12 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 			}
 	}; 
 	
-	$.widget("uix.datasource",$.ui.dataview,  {
-				
+	$.widget("uix.datasource",$.ui.dataviewlocal,  {
+				widgetEventPrefix: "dataview",
 				options:{
 					model: model,
 					reader: new schemaReader(),
-					source: null,
+					//source: function (){ _super(); },
 					url:"",
 					editurl: "",
 					cellediturl: "",
@@ -401,28 +465,35 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 				},
 				_init: function(){
 					this.option(this.options);
-					this.results = [];
+					this.result = [];
 					this._fetch();
+					var that = this;
+					
+					/*this.options.source = function (request,response){
+							console.log("data ==== "+data);
+						//that._super();
+					};*/
 				},
 				_fetch: function(){
 					if(this.options.dataLocation == "local"){
-						this.results = this.options.reader.read(this.options.source); 
+						this.options.input = this.options.reader.read(this.options.rawdata); 
 					}else if(this.options.dataLocation == "remote"){
 						
 					}
 				},
 				refresh: function(){
-					this._fetch();
+				   this._fetch();
+				   this._super();
 				},
 				get: function (prop){
-					if(this.options.paging.offset > this.results.length -1){
+					if(this.options.paging.offset > this.result.length -1){
 						console.log("ERROR: datasource: trying to get offset more than result set length, selecting last object in result array");
-						this.options.paging.offset = this.results.length -1;
+						this.options.paging.offset = this.result.length -1;
 					}
-					if(this.results[this.options.paging.offset] == null){
+					if(this.result[this.options.paging.offset] == null){
 						return "";
 					}
-					return this.results[this.options.paging.offset][prop];
+					return this.result[this.options.paging.offset][prop];
 				},
 				save: function(){
 					//retrieve data
@@ -432,29 +503,29 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 						var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
 						/*
 						if(fieldWidgets.data("spine-type") == "datepicker"){
-							that.results[that.options.paging.offset][field.name] = widgetHelper.getValue(fieldWidgets); 
+							that.result[that.options.paging.offset][field.name] = widgetHelper.getValue(fieldWidgets); 
 						}else if(fieldWidgets.data("spine-type") == "slider"){
-							that.results[that.options.paging.offset][field.name] =fieldWidgets.slider("value"  );
+							that.result[that.options.paging.offset][field.name] =fieldWidgets.slider("value"  );
 						}else if(fieldWidgets.data("spine-type") == "spinner"){
-							that.results[that.options.paging.offset][field.name] =fieldWidgets.spinner("value"  );
+							that.result[that.options.paging.offset][field.name] =fieldWidgets.spinner("value"  );
 						}else {
-							that.results[that.options.paging.offset][field.name] = fieldWidgets.val();
+							that.result[that.options.paging.offset][field.name] = fieldWidgets.val();
 						}
 						*/
-						that.results[that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
+						that.result[that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
 						
 					 });
 					
-					console.log("saving ... "+JSON.stringify(this.results));
+					console.log("saving ... "+JSON.stringify(this.result));
 				}
 				
 	});
 	
-	var datasource = $.uix.datasource({source: data});
+	var datasource = $.uix.datasource({rawdata: data});
 	var panel_fields = ["name","email","dob","ismarried"];
 	
 	
-	
+	$("#dynpager").pager({source: datasource});
  	
  	
 	function createViewController(containerEl, datasource, mode){
@@ -462,7 +533,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 		var $form = $(containerEl);
 		$form.empty();
 		
-		datasource.refresh();
+		
 		
 		//create fields
 		 $.each(datasource.options.model, function(i, field){
@@ -519,11 +590,29 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview", 'jsonp
 		 });
 	}
 	
+	function createSearchForm(containerEl, datasource, mode){
+		$(containerEl).addClass("even-odd-container");
+		var $form = $(containerEl);
+		$form.empty();
+		
+		datasource.refresh();
+		var searchModel  = $.map(datasource.options.model, function (v,i){ if( v.searchable == "true"||v.searchable == true ) return v; }); 
+		$.each(searchModel, function(i, field){
+			widgetHelper.render($form, field, "edit"); 
+		});
+		////----create button panel----
+		
+	}
 	
 	createViewController("#dynaform",datasource, "edit");
+	createSearchForm ("#dynsearch",datasource, "search");
+	$(datasource).on("dataviewresponse", function(){
+		createViewController("#dynaform",datasource, "edit");
+	})
+	datasource.refresh();
 	
 	return {
-		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController
+		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm 
 	}
 });
 var x = null;
@@ -554,7 +643,7 @@ require(['df'], function(y){ x = y;});
 </script>
 
 <script type="text/template" id="tmpl_check_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" ></span></div>
+<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Field Details" ></span></div>
 </script>
 
 
@@ -564,6 +653,10 @@ require(['df'], function(y){ x = y;});
 <body>
 	
 	<div id="dynaform"></div>
-	 
+	<div style="clear: left"></div>
+	<div id="dynsearch"></div> 
+	
+	<div style="clear: left"></div>
+	<div id='dynpager' ></div>
 </body>
 </html>

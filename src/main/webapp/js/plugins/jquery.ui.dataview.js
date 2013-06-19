@@ -71,7 +71,11 @@
 
       this.options.source(request, function(data, totalCount) {
         that.totalCount = parseInt(totalCount, 10);
-        $.observable(that.result).replaceAll(data);
+         
+       // $.observable(that.result).replaceAll(data);
+        $.observable(that.result).remove(0,that.result.length);
+        $.observable(that.result).insert(0,data);
+        
         that._trigger("response");
         if (callback) {
           callback.apply(that, arguments);

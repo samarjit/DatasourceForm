@@ -20,8 +20,9 @@ $.widget( "ui.dataviewlocal", $.ui.dataview, {
 			var sortedItems = that._sort( that._filter( that.options.input ) );
 			response( that._page( sortedItems ), sortedItems.length );
 		};
-		if ( $.observable ) {
-			$.observable( this.options.input ).bind( "insert remove", function(event, ui) {
+		if ( $.observable ) { 
+			$([ this.options.input ]).bind( "insert remove arrayChange", function(event, ui) {
+//			$.observable( this.options.input ).bind( "insert remove", function(event, ui) {
 				that.refresh();
 			});
 		}
