@@ -1,4 +1,4 @@
-$.widget("spf.gridFilter", {
+$.widget("spf.gridFilterForm", {
 	_create: function() {
 		var grid = this.grid = this.element.data("grid");
 		var options = grid.options;

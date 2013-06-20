@@ -39,15 +39,26 @@ float: left;
 display: inline-block;
 
 }
+
+
+
+
+.ui-grid .ui-selecting td { background: #eef!important; }
+.ui-grid .ui-selected td { background: #ddf!important; }
+thead td { text-align: center; }
+
+	
 </style>
 <script type="text/javascript">
-define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform'],function(cssloader){
-	cssloader.loadCss(['jqueryui'],'',null);
+define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform','uigridmain'],function(cssloader){
+	cssloader.loadCss(['jqueryui','uigrid'],'',null);
 	var data = {
 			page: 1,
 			total: 20, 
 			data: [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5, num_child: 2},
-	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20, num_child: 3}]
+	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20, num_child: 3},
+	           {name: "sam", email: "sam@ycs.com", dob: "2010-04-27", ismarried: "Y", num_cars: 10, num_child: 7}
+			]
 	};
 	
 	var model = [
@@ -82,13 +93,18 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		return Math.round(that * scopeVal) + 'px';
 	};
 	
+	$.fn.addCssRule = function (rule, id){
+		var i = (id == null) ? $.guid : id;
+		
+		$("html>head").append("<style id='style_"+i+"' >"+rule+"</style>")
+	};
 		var spineDatepicker =  {
 	 		fromElm: null,
 	 		name: "datepicker",
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				fieldWidgets.datepicker();
 	 		},
 	 		getValue: function($el){
@@ -111,7 +127,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_spinner_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				 
 				var fontSize = $(.9).toPx();
 				
@@ -163,7 +179,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				fieldWidgets.slider();
 				
 	 		},
@@ -187,7 +203,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_text_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				 
 	 		},
 	 		getValue: function($el){
@@ -210,7 +226,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_text_view").render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				 
 	 		},
 	 		getValue: function($el){
@@ -233,7 +249,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	 		render: function ($form, field,  mode  ){
 	 			var html =  $.templates("#tmpl_check_edit").render(field); // can.view("#tmpl_datepicker_"+mode, field);
 				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				fieldWidgets.css("margin","0px");
 	 		},
 	 		getValue: function($el){
@@ -442,8 +458,15 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 			}
 	}; 
 	
+	/**
+	* Never set offset in while reading datasource, this is internal state maintained by datasource, only fetch items
+	* that.options.paging.offset - this is global offset
+	* this.result - will always contain current visible result set after paging and filtering and sorting. Not the original data values.
+	* selected index is 0 for limit =1 
+	*/
 	$.widget("uix.datasource",$.ui.dataviewlocal,  {
 				widgetEventPrefix: "dataview",
+				result: [],
 				options:{
 					model: model,
 					reader: new schemaReader(),
@@ -457,7 +480,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 					validation: {},
 					paging :{ 
 						offset: 0,
-						limit: 1
+						limit: 2
 					},
 					dataLocation: "local",
 					pagingtype: "remote",
@@ -476,7 +499,10 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 				},
 				_fetch: function(){
 					if(this.options.dataLocation == "local"){
-						this.options.input = this.options.reader.read(this.options.rawdata); 
+						if(this.options.loadOnce == undefined){
+							this.options.input = this.options.reader.read(this.options.rawdata);
+							this.options.loadOnce = "loaded";
+						}
 					}else if(this.options.dataLocation == "remote"){
 						
 					}
@@ -486,14 +512,16 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 				   this._super();
 				},
 				get: function (prop){
-					if(this.options.paging.offset > this.result.length -1){
-						console.log("ERROR: datasource: trying to get offset more than result set length, selecting last object in result array");
+					/*if(this.options.paging.offset > this.result.length - 1){
+						console.log("ERROR: datasource: trying to get offset=["+this.options.paging.offset +"] more than result set length=["+this.result.length+"], selecting last object in result array");
 						this.options.paging.offset = this.result.length -1;
-					}
-					if(this.result[this.options.paging.offset] == null){
+					}*/
+					//selected index
+					if(this.result[0] == null){
 						return "";
 					}
-					return this.result[this.options.paging.offset][prop];
+					return this.result[0][prop];
+					 
 				},
 				save: function(){
 					//retrieve data
@@ -512,8 +540,11 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 							that.result[that.options.paging.offset][field.name] = fieldWidgets.val();
 						}
 						*/
-						that.result[that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
+						//selected index
+						that.result[0][field.name] =  widgetHelper.getValue(fieldWidgets );
 						
+						//temp save
+						//that.options.rawdata.data[0+that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
 					 });
 					
 					console.log("saving ... "+JSON.stringify(this.result));
@@ -525,7 +556,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	var panel_fields = ["name","email","dob","ismarried"];
 	
 	
-	$("#dynpager").pager({source: datasource});
+	
  	
  	
 	function createViewController(containerEl, datasource, mode){
@@ -566,7 +597,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		//populate data
 		 $.each(datasource.options.model, function(i,field){
 			// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
-			var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+			var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 			widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
 			/*if(fieldWidgets.data("spine-type") == "datepicker"){		widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
 				
@@ -598,21 +629,59 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		datasource.refresh();
 		var searchModel  = $.map(datasource.options.model, function (v,i){ if( v.searchable == "true"||v.searchable == true ) return v; }); 
 		$.each(searchModel, function(i, field){
+			console.log("rendering search..")
 			widgetHelper.render($form, field, "edit"); 
 		});
 		////----create button panel----
+		$("<hr style='clear:left'/>").appendTo($form);
+		var btnSearch = $("<button data-spine-type='button' data-spine-prop='btnSearch'>Search</button>").button().appendTo($form);
+		var btnClearSearch = $("<button data-spine-type='button' data-spine-prop='btnClearFilter'>Clear Filter</button>").button().appendTo($form);
 		
+		btnSearch.click(function(){
+			$.each(searchModel, function(i, field){
+				console.log("filtering search..");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				if(widgetHelper.getValue(fieldWidgets) != null && widgetHelper.getValue(fieldWidgets) != "")
+				datasource.option("filter."+field.name,{operator: "==", value: widgetHelper.getValue(fieldWidgets) })
+				 
+			});
+			
+			datasource.refresh();
+		});
+		
+		btnClearSearch.click(function(){
+			$.each(searchModel, function(i, field){
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				widgetHelper.setValue(fieldWidgets,"");
+					
+				datasource.option("filter", null);
+				datasource.refresh(); 
+			});
+			
+		});
 	}
+	
+	var selected = [];
+	$("#dynagrid").grid({source: datasource, columns: $.map(datasource.options.model, function(v,i){ v.property = v.name;  return v; }) 
+		}).gridSelectable({
+			selected: selected
+		});
+	
+	$("#dynpager").pager({source: datasource}); 
+	 
 	
 	createViewController("#dynaform",datasource, "edit");
 	createSearchForm ("#dynsearch",datasource, "search");
+	
+	//event triggered by dataview request response change
 	$(datasource).on("dataviewresponse", function(){
 		createViewController("#dynaform",datasource, "edit");
-	})
+	});
+	
 	datasource.refresh();
 	
 	return {
-		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm 
+		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm , selected : selected
 	}
 });
 var x = null;
@@ -646,6 +715,9 @@ require(['df'], function(y){ x = y;});
 <div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Field Details" ></span></div>
 </script>
 
+<script type="text/template" id="tmpl_button_view">
+<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="button"  value="Field Details" ></span></div>
+</script>
 
 
 </head>
@@ -653,10 +725,16 @@ require(['df'], function(y){ x = y;});
 <body>
 	
 	<div id="dynaform"></div>
+	
 	<div style="clear: left"></div>
 	<div id="dynsearch"></div> 
 	
 	<div style="clear: left"></div>
 	<div id='dynpager' ></div>
+	
+	 
+	
+	<div style="clear: left"></div>
+	<table id="dynagrid"><thead></thead><tbody></tbody><tfoot ></tfoot></table>
 </body>
 </html>

@@ -8,8 +8,9 @@ require.config({
         jquery: '../js/lib/jquery-1.9.1',
          jqueryui:   '../js/lib/jquery-ui-1.10.1',
        // jqueryui:   'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui',
-        uigridmain: 'http://view.jqueryui.com/grid/ui/jquery.ui.grid',
+        uigridmain: '../js/plugins/jquery.ui.grid',
         uigrid:'../js/plugins/mydataview',
+        uigridselectable: '../js/plugins/grid.selectable',
         jqgrid: '../js/plugins/grid.locale-en',
         jqgridmain:'../js/plugins/jquery.jqGrid.src',
         jquerytmpl: 'http://view.jqueryui.com/grid/external/jquery.tmpl',
@@ -35,7 +36,9 @@ require.config({
         jsonpath: "../js/plugins/jsonpath-0.8.0",
         gridpager: "../js/plugins/grid-pager",
         gridfilter: "../js/plugins/grid-filter",
-        gridfilterform: "../js/plugins/grid-filter-form"
+        gridfilterform: "../js/plugins/grid-filter-form",
+        gridnavigator: '../js/plugins/grid-navigator',
+        gridsort: '../js/plugins/grid-sort'
     },
     shim: {
         jqueryui: {
@@ -44,25 +47,29 @@ require.config({
         },
         uidataview: ['jqueryui'],
         uidataviewlocal: ['jqueryui','uidataview'],
-        uigrid: {
+        uigrid:['uigridmain'],
+        uigridmain: {
         	//exports: "$", 
         	deps:[
         	 'jqueryui',    
         	 'uidataview',
-        	 'uigridmain',
-        	 'uiobservable',
-        	 'uidataviewlocal',
-        	 'http://view.jqueryui.com/grid/grid-spf/pager.js',
-        	 'http://view.jqueryui.com/grid/grid-editing/grid.selectable.js',
-        	 'http://view.jqueryui.com/grid/grid-editing/navigator.js',
-        	 'http://view.jqueryui.com/grid/grid-editing/localstore.js',
-        	 'http://view.jqueryui.com/grid/grid-editing/helpers.js',
+        	 'jsrobservable',
+        	 'uidataviewlocal', 
+        	 'uigridselectable',
+        	 'gridpager',
+        	 'gridnavigator',
+        	// 'http://view.jqueryui.com/grid/grid-editing/localstore.js',
+        	// 'http://view.jqueryui.com/grid/grid-editing/helpers.js',
         	 'jquerytmpl',
-        	 'http://view.jqueryui.com/grid/grid-spf/grid-filter.js',
-        	 'http://view.jqueryui.com/grid/grid-spf/grid-sort.js'
+        	 'gridfilter',
+        	 'gridsort'
         	]
         },
-        uigridmain: ['jqueryui'],
+        uigridselectable:['jqueryui'],
+        gridpager:['jqueryui'],
+        gridnavigator : ['jqueryui'],
+        gridfilter: ['jqueryui'],
+        gridsort: ['jqueryui'],
         rcanjsmain: {
         	//exports: "$", 
         	deps: ['jquery']

@@ -44,7 +44,8 @@ $.widget( "spf.pager", {
 		this.buttons.button("enable");
 
 		var source = this.options.source;
-		if (!source.options.paging.offset) {
+		
+		if (!source.options.paging.offset ||  source.options.paging.offset < 0) {
 			this.buttons.filter('[data-page="start"], [data-page="prev"]').button("disable");
 		}
 		if (source.options.paging.offset + source.options.paging.limit >= source.totalCount) {
