@@ -50,7 +50,7 @@ thead td { text-align: center; }
 	
 </style>
 <script type="text/javascript">
-define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform','uigridmain'],function(cssloader){
+define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform','uigridmain', 'datasource','widgethelper', 'grideditor'],function(cssloader){
 	cssloader.loadCss(['jqueryui','uigrid'],'',null);
 	var data = {
 			page: 1,
@@ -69,495 +69,15 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "displayText", label: "Num Cars", searchable: false, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 	             {name: "num_child", type: "int", capturetype: "spinner", displaytype: "displayText", label: "Num Child", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
 	            ];
-	//em px converter from filamentgroup
-	$.fn.toEm = function(settings){
-		settings = jQuery.extend({
-			scope: 'body'
-		}, settings);
-		var that = parseInt(this[0],10),
-			scopeTest = jQuery('<div style="display: none; font-size: 1em; margin: 0; padding:0; height: auto; line-height: 1; border:0;">&nbsp;</div>').appendTo(settings.scope),
-			scopeVal = scopeTest.height();
-		scopeTest.remove();
-		return (that / scopeVal).toFixed(8) + 'em';
-	};
 
-
-	$.fn.toPx = function(settings){
-		settings = jQuery.extend({
-			scope: 'body'
-		}, settings);
-		var that = parseFloat(this[0]),
-			scopeTest = jQuery('<div style="display: none; font-size: 1em; margin: 0; padding:0; height: auto; line-height: 1; border:0;">&nbsp;</div>').appendTo(settings.scope),
-			scopeVal = scopeTest.height();
-		scopeTest.remove();
-		return Math.round(that * scopeVal) + 'px';
-	};
-	
-	$.fn.addCssRule = function (rule, id){
-		var i = (id == null) ? $.guid : id;
-		
-		$("html>head").append("<style id='style_"+i+"' >"+rule+"</style>")
-	};
-		var spineDatepicker =  {
-	 		fromElm: null,
-	 		name: "datepicker",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				fieldWidgets.datepicker();
-	 		},
-	 		getValue: function($el){
-	 			return $el.val();
-	 		},
-	 		setValue: function($el, val){
-	 			$el.val(val);
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-	 	
-		var spineSpinner =  {
-	 		fromElm: null,
-	 		name: "spinner",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_spinner_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				 
-				var fontSize = $(.9).toPx();
-				
-				fieldWidgets.spinner();
-			 	//fieldWidgets.height(20);
-			 	//fieldWidgets.parent().height(20)
-				fieldWidgets.outerHeight(fieldWidgets.parent().height());
-				fieldWidgets.outerWidth(150-24);
-
-				
-				fieldWidgets.parent().css("font-size","0px");
-				fieldWidgets.parent().css("width","150px");
-				fieldWidgets.css("font-size",".8em");
-				fieldWidgets.css("font-size",fontSize);
-				/*
-				//another way to position correctly
-				//fieldWidgets.css("position","absolute");
-				//fieldWidgets.css("top","0");
-				
-				*/
-				//fieldWidgets.css("line-height",".8em"); //not required
-				
-				fieldWidgets.css("margin-top","0px");
-				fieldWidgets.css("margin-bottom","0px");
-				fieldWidgets.css("margin-left","2px");
-				
-				fieldWidgets.css("vertical-align","top");
-				
-				
-			 
-	 		},
-	 		getValue: function($el){
-	 			return $el.val();
-	 		},
-	 		setValue: function($el, val){
-	 			$el.val(val);
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-	 	
-		var spineSlider =  {
-	 		fromElm: null,
-	 		name: "slider",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				fieldWidgets.slider();
-				
-	 		},
-	 		getValue: function($el){
-	 			return $el.data('ui-slider').value();
-	 		},
-	 		setValue: function($el, val){
-	 			$el.data('ui-slider').value(val);
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-	 	
-		var spineText =  {
-	 		fromElm: null,
-	 		name: "text",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_text_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				 
-	 		},
-	 		getValue: function($el){
-	 			return $el.val();
-	 		},
-	 		setValue: function($el, val){
-	 			$el.val(val);
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-		
-		var spineDisplayText =  {
-	 		fromElm: null,
-	 		name: "displayText",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_text_view").render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				 
-	 		},
-	 		getValue: function($el){
-	 			return $el.text();
-	 		},
-	 		setValue: function($el, val){
-	 			$el.text(val);
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-		
-		var spineCheckbox =  {
-	 		fromElm: null,
-	 		name: "checkbox",
-	 		render: function ($form, field,  mode  ){
-	 			var html =  $.templates("#tmpl_check_edit").render(field); // can.view("#tmpl_datepicker_"+mode, field);
-				$form.append(html);	
-				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-				fieldWidgets.css("margin","0px");
-	 		},
-	 		getValue: function($el){
-	 			 if($el.is(":checked")){
-	 				return $el.val();
-	 			 }else{
-	 				 return "";
-	 			 }
-	 		},
-	 		setValue: function($el, val){
-	 			$el.val(val);
-	 			console.log("check value ==== "+val)
-	 			
-	 			if(val == 'y' )$el[0].checked = true;
-	 			if(val == 'Y' )$el[0].checked = true;
-	 			if(/true/i.test(val) )$el[0].checked = true;
-	 			if(val == 'Yes' )$el[0].checked = true;
-	 			if(val == true )$el[0].checked = true;
-	 			
-	 			if(val == 'n' )$el[0].checked = false
-	 			if(val == 'N' )$el[0].checked = false
-	 			if(/false/i.test(val) )$el[0].checked = false
-	 			if(val == 'No' )$el[0].checked = false
-	 			if(val == false )$el[0].checked = false
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-	 	
-		$.widgetList = {};
-	 	$.widgetList ["datepicker"] =  spineDatepicker;
-	 	$.widgetList ["spinner"] =  spineSpinner;
-	 	$.widgetList ["slider"] =  spineSlider;
-	 	$.widgetList ["text"] =  spineText;
-	 	$.widgetList ["email"] =  spineText;
-	 	$.widgetList ["displayText"] =  spineDisplayText;
-	 	$.widgetList ["checkbox"] =  spineCheckbox;
-	 	
-	 	
-	 	var widgetHelper = {
-			render: function ($form, field, mode  ){
-				var wiz = null ;
-				if(mode == 'edit'){
-					if(field.capturetype == null || field.capturetype == ""){
-						console.log('render: capturetype:'+ field.capturetype + " not found in model using text");
-						field.capturetype = "text";
-					}
-					
-					wiz = $.widgetList [field.capturetype];
-					
-					if(wiz == null || wiz == ""){
-						console.log('render: capturetype:'+ field.capturetype + " is invalid using default text");
-						wiz = $.widgetList ["text"];
-					}
-				}else{
-					//view
-					if(field.displaytype == null || field.displaytype == ""){
-						console.log('render: displaytype:'+ field.capturetype + " not found in model using displayText");
-						field.displaytype = "displayText";
-					}
-					
-					wiz = $.widgetList [field.displaytype];
-					
-					if(wiz == null || wiz == ""){
-						console.log('render: displaytype:'+ field.capturetype + " is invalid, using displayText");
-						wiz = $.widgetList ["text"];
-					}
-				}
-				
-				if(wiz == null || wiz == ""){
-					console.log('render: capturetype/displaytype:'+ field.capturetype + " not found in widget registry for mode="+mode);
-				}else{
-					wiz.render($form, field, mode)
-				}
-	 		},
-	 		getValue: function($el){
-	 			var wizType = $el.data("spine-type");
-	 			if(wizType == null || wizType == ""){
-					console.log('getValue: wizType: '+ wizType + " not found in data-spine-type");
-				}else{
-					var wiz = $.widgetList [wizType];
-					if(wiz == null || wiz == ""){
-						console.log('getValue: wizType: '+ wizType + " not found in widget registry");
-					}else{
-						console.log('getValue: wizType: '+ wizType );
-						return wiz.getValue($el);
-					}
-				}
-	 			return null;
-	 		},
-	 		setValue: function($el, val){
-	 			var wizType = $el.data("spine-type");
-	 			if(wizType == null || wizType == ""){
-					console.log('setValue: wizType: '+ wizType + " not found in data-spine-type");
-				}else{
-					var wiz = $.widgetList [wizType];
-					if(wiz == null || wiz == ""){
-						console.log('setValue: wizType: '+ wizType + " not found in widget registry");
-					}else{
-						wiz.setValue($el, val);
-					}
-					 
-				}
-	 			
-	 		},
-	 		showError: function($el){
-	 			
-	 		},
-	 		showTooltip: function($el){
-	 			
-	 		}
-	 	};
-	 	
 	 
-	ArrayReader = function (fields) {
-		
-		if ($.isFunction(window["wijmoASPNetParseOptions"])) {
-			wijmoASPNetParseOptions(fields);
-		}
 
-		if ($.isArray(fields)) {
-			this.fields = fields;
-		}
-	};
-	window.ArrayReader = ArrayReader;
-
-	$.extend(ArrayReader.prototype, {
-		read: function (datasource) {
-			if ($.isArray(datasource.data)) {
-				datasource.items = this._map(datasource.data);
-			}
-			else {
-				datasource.items = [];
-			}
-		},
-
-		_map: function (data) {
-			var self = this, arr = [];
-			if (self.fields === undefined || self.fields.length === 0) {
-				$.extend(true, arr, data);
-				return arr;
-			}
-			else {
-				$.each(data, function (index, value) {
-					var i = {};
-					$.each(self.fields, function (index, field) {
-						// mapping property is a function,
-						// the return value will be used as value.
-						
-						//handle the juice
-						if($.type(field) == "string" ) {
-							var tmp = field;
-							field = {name: tmp, mapping: tmp};
-						}
-						if (field.mapping && typeof field.mapping && window[field.mapping]) {
-							field.mapping = window[field.mapping];
-						}
-
-						if ($.isFunction(field.mapping)) {
-							i[field.name] = field.mapping(value);
-							return true;
-						}
-						// use string field mapping or number index mapping.
-						var mapping = field.mapping !== undefined ?
-											field.mapping : field.name,
-						v = value[mapping];
-						if (v === undefined) {
-							if (field.defaultValue !== undefined) {
-								v = field.defaultValue;
-							}
-							else {
-								v = value;
-							}
-						}
-						i[field.name] = v;
-					});
-					arr.push(i);
-				});
-			}
-			return arr;
-		}
-	});
-	
-	function schemaReader (newoptions) {
-			this.options = {
-				rootList: "data",
-				meta: "",
-				datatype: "json",
-				items: [],
-				resultFields: model//[{name: "name",  mapping: "name" /*can be xpath,json path or javascript function*/}, {name: "email"}]
-			};
-			
-			$.extend(this.options, newoptions);
-			
-			this.read = function(obj){
-				//debugger; 
-				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
-				//return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
-				var datasource = {data: temp} ;
-				 new ArrayReader(this.options.resultFields).read(datasource);
-				return datasource.items;
-			}
-	}; 
-	
-	/**
-	* Never set offset in while reading datasource, this is internal state maintained by datasource, only fetch items
-	* that.options.paging.offset - this is global offset
-	* this.result - will always contain current visible result set after paging and filtering and sorting. Not the original data values.
-	* selected index is 0 for limit =1 
-	*/
-	$.widget("uix.datasource",$.ui.dataviewlocal,  {
-				widgetEventPrefix: "dataview",
-				result: [],
-				options:{
-					model: model,
-					reader: new schemaReader(),
-					//source: function (){ _super(); },
-					url:"",
-					editurl: "",
-					cellediturl: "",
-					filter: [],
-					sort: [],
-					i18n: {},
-					validation: {},
-					paging :{ 
-						offset: 0,
-						limit: 2
-					},
-					dataLocation: "local",
-					pagingtype: "remote",
-					filterType: "remote"
-				},
-				_init: function(){
-					this.option(this.options);
-					this.result = [];
-					this._fetch();
-					var that = this;
-					
-					/*this.options.source = function (request,response){
-							console.log("data ==== "+data);
-						//that._super();
-					};*/
-				},
-				_fetch: function(){
-					if(this.options.dataLocation == "local"){
-						if(this.options.loadOnce == undefined){
-							this.options.input = this.options.reader.read(this.options.rawdata);
-							this.options.loadOnce = "loaded";
-						}
-					}else if(this.options.dataLocation == "remote"){
-						
-					}
-				},
-				refresh: function(){
-				   this._fetch();
-				   this._super();
-				},
-				get: function (prop){
-					/*if(this.options.paging.offset > this.result.length - 1){
-						console.log("ERROR: datasource: trying to get offset=["+this.options.paging.offset +"] more than result set length=["+this.result.length+"], selecting last object in result array");
-						this.options.paging.offset = this.result.length -1;
-					}*/
-					//selected index
-					if(this.result[0] == null){
-						return "";
-					}
-					return this.result[0][prop];
-					 
-				},
-				save: function(){
-					//retrieve data
-					var that = this;
-					 $.each(datasource.options.model, function(i,field){
-						// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
-						var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
-						/*
-						if(fieldWidgets.data("spine-type") == "datepicker"){
-							that.result[that.options.paging.offset][field.name] = widgetHelper.getValue(fieldWidgets); 
-						}else if(fieldWidgets.data("spine-type") == "slider"){
-							that.result[that.options.paging.offset][field.name] =fieldWidgets.slider("value"  );
-						}else if(fieldWidgets.data("spine-type") == "spinner"){
-							that.result[that.options.paging.offset][field.name] =fieldWidgets.spinner("value"  );
-						}else {
-							that.result[that.options.paging.offset][field.name] = fieldWidgets.val();
-						}
-						*/
-						//selected index
-						that.result[0][field.name] =  widgetHelper.getValue(fieldWidgets );
-						
-						//temp save
-						//that.options.rawdata.data[0+that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
-					 });
-					
-					console.log("saving ... "+JSON.stringify(this.result));
-				}
-				
-	});
-	
-	var datasource = $.uix.datasource({rawdata: data});
+	var datasource = $.uix.datasource({model: model, rawdata: data});
 	var panel_fields = ["name","email","dob","ismarried"];
 	
 	
 	
- 	
+	
  	
 	function createViewController(containerEl, datasource, mode){
 		$(containerEl).addClass("even-odd-container");
@@ -621,6 +141,8 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		 });
 	}
 	
+	
+	
 	function createSearchForm(containerEl, datasource, mode){
 		$(containerEl).addClass("even-odd-container");
 		var $form = $(containerEl);
@@ -661,12 +183,23 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		});
 	}
 	
-	var selected = [];
-	$("#dynagrid").grid({source: datasource, columns: $.map(datasource.options.model, function(v,i){ v.property = v.name;  return v; }) 
-		}).gridSelectable({
-			selected: selected
-		});
-	
+	var selected = [], selectedIndex = [];	
+	var grid  = $("#dynagrid").grid({source: datasource, 
+		columns: $.map(datasource.options.model, function(v,i){
+			v.editor = v.capturetype;
+			v.property = v.name;  return v; 
+			}) 
+		})
+	/*grid.gridEditor({
+		items: "td:not(:has(button))"
+	});*/
+	grid.gridSort();
+	grid.gridFilter();
+	/*grid.gridSelectable({
+			selected: selected,
+			selectedIndex: selectedIndex,
+			onSelectRow: function(){ console.log('selected something '+this.selectedIndex); datasource.refresh();}
+		});*/
 	$("#dynpager").pager({source: datasource}); 
 	 
 	
@@ -681,7 +214,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	datasource.refresh();
 	
 	return {
-		data: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm , selected : selected
+		xdata: data, model: model,reader: schemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm , selected : selectedIndex
 	}
 });
 var x = null;

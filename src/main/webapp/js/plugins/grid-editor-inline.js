@@ -94,6 +94,12 @@ $.widget( "ui.editor", {
 $.ui.editor.editors = {
 	spinner: function( input, options ) {
 		return input.spinner( options ).spinner("widget");
+	},
+	datepicker: function (input, options){
+		return input.datepicker();
+	},
+	slider: function(input, options){
+		return input.slider(  );
 	}
 };
 

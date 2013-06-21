@@ -14,6 +14,7 @@ require.config({
         jqgrid: '../js/plugins/grid.locale-en',
         jqgridmain:'../js/plugins/jquery.jqGrid.src',
         jquerytmpl: 'http://view.jqueryui.com/grid/external/jquery.tmpl',
+        datasource: '../js/plugins/jquery.uix.datasource',
         uidataview: '../js/plugins/jquery.ui.dataview',
         uidataviewlocal: '../js/plugins/jquery.ui.dataviewlocal',
        // uidataviewlocal: 'http://view.jqueryui.com/grid/ui/jquery.ui.dataviewlocal',
@@ -22,7 +23,7 @@ require.config({
         rcanjs: 'http://canjs.com/release/latest/can.view.mustache',
         canjsmain:  '../js/lib/can.jquery',
         canjs: '../js/lib/can.view.mustache',
-        jsrender: 'http://www.jsviews.com/download/jsrender',
+        jsrender: '../js/plugins/jsrender',
         jsrobservable: '../js/plugins/jquery.observable',
         jsviews: '../js/plugins/jquery.views',
         layout: '../js/plugins/jquery-layout.min',
@@ -38,15 +39,21 @@ require.config({
         gridfilter: "../js/plugins/grid-filter",
         gridfilterform: "../js/plugins/grid-filter-form",
         gridnavigator: '../js/plugins/grid-navigator',
-        gridsort: '../js/plugins/grid-sort'
+        gridsort: '../js/plugins/grid-sort',
+        widgethelper: '../js/plugins/widget-helper',
+        grideditor: '../js/plugins/grid-editor',
+        grideditorinline: '../js/plugins/grid-editor-inline',
+        
     },
     shim: {
         jqueryui: {
            // exports: "$",
             deps: ['jquery']
         },
+        widgethelper: ['jqueryui'],
         uidataview: ['jqueryui'],
         uidataviewlocal: ['jqueryui','uidataview'],
+        datasource: ['uidataviewlocal'],
         uigrid:['uigridmain'],
         uigridmain: {
         	//exports: "$", 
@@ -62,9 +69,12 @@ require.config({
         	// 'http://view.jqueryui.com/grid/grid-editing/helpers.js',
         	 'jquerytmpl',
         	 'gridfilter',
-        	 'gridsort'
+        	 'gridsort',
+        	 'grideditor'
         	]
         },
+        grideditor: ['grideditorinline','jqueryui','jsrobservable'],
+        grideditorinline: ['jqueryui'],
         uigridselectable:['jqueryui'],
         gridpager:['jqueryui'],
         gridnavigator : ['jqueryui'],

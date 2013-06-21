@@ -61,6 +61,10 @@ $.widget( "spf.pager", {
 	},
 
 	page: function(pageIndex) {
+		
+		if(pageIndex != null && pageIndex > -1)
+			this.options.source.options.selectedIndex = null;
+		
 		return this.options.source.page(pageIndex);
 	},
 

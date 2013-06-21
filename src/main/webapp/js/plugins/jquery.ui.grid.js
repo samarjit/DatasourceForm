@@ -252,6 +252,12 @@ $.widget( "ui.grid", {
 			}
 			head = this.uiGridHeadTable.find( "thead" );
 			if ( !head.find("th").length ) {
+				
+				//samarjit
+				if ( !head.find("tr").length ) {
+					head = $( "<tr class='ui-state-default'></tr>" ).appendTo(head);
+				}
+				
 				$.each( this.options.columns, function( index, column ) {
 					$( "<th class='ui-state-default'>" )
 						.text( column.label || column.property )

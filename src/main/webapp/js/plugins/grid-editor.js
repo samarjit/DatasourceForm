@@ -19,7 +19,7 @@ $.widget( "ui.gridEditor", {
 		items: "td"
 	},
 	_create: function() {
-		var grid = this.element.data("grid");
+		var grid = this.element.data("ui-grid");
 
 		this._on({
 			dblclick: function( event ) {

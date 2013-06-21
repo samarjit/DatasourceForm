@@ -1,6 +1,6 @@
 $.widget("spf.gridFilter", {
 	_create: function() {
-		var grid = this.grid = this.element.data("grid");
+		var grid = this.grid = this.element.data("ui-grid");
 		var options = grid.options;
 		var source = grid.options.source;
 		this._on( source, {
