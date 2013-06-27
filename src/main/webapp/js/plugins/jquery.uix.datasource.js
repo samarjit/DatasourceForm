@@ -55,7 +55,11 @@
 								v = field.defaultValue;
 							}
 							else {
-								v = value;
+								if(!field.mapping ){
+									v = value;
+								}else{
+									v = undefined;
+								}
 							}
 						}
 						i[field.name] = v;
@@ -67,14 +71,62 @@
 		}
 	});
 	
+	function parseCSV(str, FIELD_SEP, RECORD_SEP, DELIMITER  ) {
+	    var arr = [];
+	    var quote = false;  // true means we're inside a quoted field
+		
+	    var DELIMITER = DELIMITER||'"'; //escape like " rec""ord "
+	    var RECORD_SEP = RECORD_SEP||'\n';//or it can be array like ['\n','\r'];
+	    var FIELD_SEP = FIELD_SEP||",";
+	    if(typeof(RECORD_SEP) == "string"){
+	    	//RECORD_SEP = [RECORD_SEP];
+	    }
+	    // iterate over each character, keep track of current row and column (of the returned array)
+	    for (var row = col = c = 0; c < str.length; c++) {
+	        var cc = str[c], nc = str[c+1];        // current character, next character
+	        arr[row] = arr[row] || [];             // create a new row if necessary
+	        arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
+
+	        // If the current character is a quotation mark, and we're inside a
+	        // quoted field, and the next character is also a quotation mark,
+	        // add a quotation mark to the current column and skip the next character
+	        // if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }  
+	        if (cc == DELIMITER && quote && nc == DELIMITER) { arr[row][col] += cc; c+=DELIMITER.length; continue; }
+	        
+	        //samar
+	        if (cc == ' ' && !quote){ continue; }
+	        
+	        // If it's just one quotation mark, begin/end quoted field
+	        //if (cc == '"') { quote = !quote; continue; }
+	        if (cc == DELIMITER) { quote = !quote; c+=(DELIMITER.length -1); continue; }
+
+	        // If it's a comma and we're not in a quoted field, move on to the next column
+	        // if (cc == ',' && !quote) { ++col; continue; }
+	        if (cc == FIELD_SEP && !quote) { ++col; c+=(FIELD_SEP.length -1); continue; }
+
+	        // If it's a newline and we're not in a quoted field, move on to the next
+	        // row and move to column 0 of that new row
+	        // if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+	        if (RECORD_SEP.indexOf(cc) > -1 && !quote) { ++row; col = 0;   while(RECORD_SEP.indexOf(str[c+1]) >-1 ){++c;} continue; }
+
+	        // Otherwise, append the current character to the current column
+	        arr[row][col] += cc;
+	    }
+	    return arr;
+	}
+	
 	//class
-	function schemaReader (newoptions) {
+	function SchemaReader (newoptions) {
 			this.options = {
 				rootList: "data",
 				meta: "",
 				datatype: "json",
 				items: [],
 				resultFields: null//[{name: "name",  mapping: "name" /*can be xpath,json path or javascript function*/}, {name: "email"}]
+				,
+				csvFieldSep : ",",
+				csvRecordSep: "\r\n",
+				csvFieldDelimiter: '"'
 			};
 			
 			$.extend(this.options, newoptions);
@@ -84,7 +136,12 @@
 				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
 				//return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
 				var datasource = {data: temp} ;
-				 new ArrayReader(this.options.resultFields).read(datasource);
+				if(this.options.datatype == 'text' || this.options.datatype == 'csv'){
+					datasource.data = parseCSV(obj, this.csvfieldSep, this.csvRecordSep, this.csvFieldDelimiter ) ;
+					new ArrayReader(this.options.resultFields).read(datasource);
+				}else{
+					new ArrayReader(this.options.resultFields).read(datasource);
+				}
 				return datasource.items;
 			}
 	}; 
@@ -100,7 +157,7 @@
 				result: [],
 				options:{
 					model: null,
-					reader: new schemaReader(),
+					reader: new SchemaReader(),
 					//source: function (){ _super(); },
 					url:"",
 					editurl: "",

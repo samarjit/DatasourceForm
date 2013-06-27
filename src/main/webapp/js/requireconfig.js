@@ -29,7 +29,7 @@ require.config({
         layout: '../js/plugins/jquery-layout.min',
         ace: '../js/plugins/ace',
         text: '../js/text',
-        jqueryvalidation: '../js/plugins/jquery.validate.min',
+        jqueryvalidation: '../js/plugins/jquery.validate',
         additionalvalidation: '../js/plugins/additional-validation',
         jquerypp: '../js/plugins/jquerypp.custom',
         canui: '../js/plugins/canui',

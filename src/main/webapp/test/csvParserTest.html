@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+ 
+<script src="../js/lib/jquery-1.9.0.js"> </script>
+ 	
+<script type="text/javascript">
+var x ='Year,Make,Model,Description,Price\r\n\r\n'+
+'1997,Ford,E350,"ac, abs, moon",3000.00\n'+
+'1999,Chevy,"Venture ""Extended Edition""","",4900.00\n'+
+'1999,Chevy,"Venture ""Extended Edition, Very Large""","",5000.00\n'+
+'1996,Jeep,Grand Cherokee,"MUST SELL!\n'+
+'air, moon roof, loaded",4799.00';
+
+
+var CSV = {
+		parse: function(csv, reviver) {
+		    reviver = reviver || function(r, c, v) { return v; };
+		    var chars = csv.split(''), c = 0, cc = chars.length, start, end, table = [], row;
+		    while (c < cc) {
+		        table.push(row = []);
+		        while (c < cc && '\r' !== chars[c] && '\n' !== chars[c]) {
+		            start = end = c;
+		            if ('"' === chars[c]){
+		                start = end = ++c;
+		                while (c < cc) {
+		                    if ('"' === chars[c]) {
+		                        if ('"' !== chars[c+1]) { break; }
+		                        else { chars[++c] = ''; } // unescape ""
+		                    }
+		                    end = ++c;
+		                }
+		                if ('"' === chars[c]) { ++c; }
+		                while (c < cc && '\r' !== chars[c] && '\n' !== chars[c] && ',' !== chars[c]) { ++c; }
+		            } else {
+		                while (c < cc && '\r' !== chars[c] && '\n' !== chars[c] && ',' !== chars[c]) { end = ++c; }
+		            }
+		            row.push(reviver(table.length-1, row.length, chars.slice(start, end).join('')));
+		            if (',' === chars[c]) { ++c; }
+		        }
+		        if ('\r' === chars[c]) { ++c; }
+		        if ('\n' === chars[c]) { ++c; }
+		    }
+		    return table;
+		},
+
+		stringify: function(table, replacer) {
+		    replacer = replacer || function(r, c, v) { return v; };
+		    var csv = '', c, cc, r, rr = table.length, cell;
+		    for (r = 0; r < rr; ++r) {
+		        if (r) { csv += '\r\n'; }
+		        for (c = 0, cc = table[r].length; c < cc; ++c) {
+		            if (c) { csv += ','; }
+		            cell = replacer(r, c, table[r][c]);
+		            if (/[,\r\n"]/.test(cell)) { cell = '"' + cell.replace(/"/g, '""') + '"'; }
+		            csv += (cell || 0 === cell) ? cell : '';
+		        }
+		    }
+		    return csv;
+		}
+		};
+		
+		
+function parseCSV(str, FIELD_SEP, RECORD_SEP, DELIMITER  ) {
+    var arr = [];
+    var quote = false;  // true means we're inside a quoted field
+	
+    var DELIMITER = DELIMITER||'"'; //escape like " rec""ord "
+    var RECORD_SEP = RECORD_SEP||'\n';//or it can be array like ['\n','\r'];
+    var FIELD_SEP = FIELD_SEP||",";
+    if(typeof(RECORD_SEP) == "string"){
+    	//RECORD_SEP = [RECORD_SEP];
+    }
+    // iterate over each character, keep track of current row and column (of the returned array)
+    for (var row = col = c = 0; c < str.length; c++) {
+        var cc = str[c], nc = str[c+1];        // current character, next character
+        arr[row] = arr[row] || [];             // create a new row if necessary
+        arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
+
+        // If the current character is a quotation mark, and we're inside a
+        // quoted field, and the next character is also a quotation mark,
+        // add a quotation mark to the current column and skip the next character
+        // if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }  
+        if (cc == DELIMITER && quote && nc == DELIMITER) { arr[row][col] += cc; c+=DELIMITER.length; continue; }
+        
+        // If it's just one quotation mark, begin/end quoted field
+        //if (cc == '"') { quote = !quote; continue; }
+        if (cc == DELIMITER) { quote = !quote; c+=(DELIMITER.length -1); continue; }
+
+        // If it's a comma and we're not in a quoted field, move on to the next column
+        // if (cc == ',' && !quote) { ++col; continue; }
+        if (cc == FIELD_SEP && !quote) { ++col; c+=(FIELD_SEP.length -1); continue; }
+
+        // If it's a newline and we're not in a quoted field, move on to the next
+        // row and move to column 0 of that new row
+        // if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+        if (RECORD_SEP.indexOf(cc) > -1 && !quote) { ++row; col = 0;   while(RECORD_SEP.indexOf(str[c+1]) >-1 ){++c;} continue; }
+
+        // Otherwise, append the current character to the current column
+        arr[row][col] += cc;
+    }
+    return arr;
+}
+
+function parseCSVOrig(str) {
+    var arr = [];
+    var quote = false;
+    for (var row = col = c = 0; c < str.length; c++) {
+        var cc = str[c], nc = str[c+1];
+        arr[row] = arr[row] || [];
+        arr[row][col] = arr[row][col] || '';
+        
+        if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
+        if (cc == '"') { quote = !quote; continue; }
+        if (cc == ',' && !quote) { ++col; continue; }
+        if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+        
+        arr[row][col] += cc;
+    }
+    return arr;
+}
+
+function fun(){
+$(".res").text(JSON.stringify(parseCSV(x,null,"\r\n"),null,3) );
+$(".orig").text(JSON.stringify(parseCSVOrig(x),null,3) );
+}
+
+</script>
+</head>
+<body onload="fun()">
+	<pre class="res"></pre>
+	<pre class="orig"></pre>
+</body>
+</html>
