@@ -11,7 +11,7 @@ require.config({
         uigridmain: '../js/plugins/jquery.ui.grid',
         uigrid:'../js/plugins/mydataview',
         uigridselectable: '../js/plugins/grid.selectable',
-        jqgrid: '../js/plugins/grid.locale-en',
+        jqgrid: '../js/plugins/i18n/grid.locale-en',
         jqgridmain:'../js/plugins/jquery.jqGrid.src',
         jquerytmpl: 'http://view.jqueryui.com/grid/external/jquery.tmpl',
         datasource: '../js/plugins/jquery.uix.datasource',
