@@ -72,7 +72,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 
 	 
 
-	var datasource = $.uix.datasource({model: model, rawdata: data});
+	var datasource = $.uix.datasource({model: model, rawdata: data, paging:{limit: 1} });
 	var panel_fields = ["name","email","dob","ismarried"];
 	
 	
@@ -164,7 +164,7 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 				console.log("filtering search..");
 				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 				if(widgetHelper.getValue(fieldWidgets) != null && widgetHelper.getValue(fieldWidgets) != "")
-				datasource.option("filter."+field.name,{operator: "==", value: widgetHelper.getValue(fieldWidgets) })
+				datasource.option("filter."+field.name,{operator: "like", value: widgetHelper.getValue(fieldWidgets) })
 				 
 			});
 			
@@ -211,6 +211,11 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 		createViewController("#dynaform",datasource, "edit");
 	});
 	
+	$("#btnSave").button().click(function(){
+		datasource.save();
+		datasource.refresh();
+	});
+	
 	datasource.refresh();
 	
 	return {
@@ -220,37 +225,140 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 var x = null;
 require(['df'], function(y){ x = y;});
 </script>	
+
+
+
 <script type="text/template" id="tmpl_datepicker_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" /></div>
+<div class="fieldbox">	
+<div class='my-datepicker-wrapper'>
+	<label for="{{:name}}" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label>  <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" style="position:relative;z-index:2" /></div>
+	<div class="error-container"></div>
+</div>	
 </script>
  
 <script type="text/template" id="tmpl_text_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="text" value="Field Details" /></div>
+<div class="fieldbox">	
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <input type="text" name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="{{:defaultValue}}" />
+	<div class="error-container"></div>
+</div>
 </script>
 
+
+
 <script type="text/template" id="tmpl_text_view">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <span type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="displayText" value="Field Details" ></span></div>
+<div class="my-displayfield-wrapper">
+	<div class="fieldbox">	<label for="caption" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+	</label><input type='hidden' data-spine-prop="{{:name}}" name='{{:name}}' id='{{:name}}' data-spine-type="displayText" value="{{:defaultValue}}" /> <span type="text" name="disp_{{:name}}"   >{{:defaultValue}}</span></div>
+	<div class="error-container"></div>	
+</div>
+</script>
+
+<script type="text/template" id="tmpl_label_view">
+ <label for="{{:name}}"  data-spine-prop="{{:name}}" data-spine-type="label" style="line-height:25px" class="field-label" >
+ 	{{if defaultValue}}
+ 		{{:defaultValue}}
+ 	{{else}}
+ 		{{:label}}
+ 	{{/if}}</label>
+ 	<div class="error-container"></div>
+</div>
+
+</script>
+
+<script type="text/template" id="tmpl_textarea_edit">
+<div class="fieldbox">	<label for="{{:name}}" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+	{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+	</label><textarea type="text" name="{{:name}}" id='{{:name}}' data-spine-prop="{{:name}}"  data-spine-type="displayText"  >{{:defaultValue}}</textarea>
+	<div class="error-container"></div>
+</div>
 </script>
 
 <script type="text/template" id="tmpl_number_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" /></div>
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" />
+	<div class="error-container"></div>
+</div>
+
 </script>
 
 <script type="text/template" id="tmpl_spinner_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="spinner"  value="Field Details" /></div>
+<div class="fieldbox">	
+<label for="{{:name}}" class="field-label">
+{{:label}}
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="spinner"  value="" />
+<div class="error-container"></div>
+</div>
 </script>
  
+ 
+ 
 <script type="text/template" id="tmpl_slider_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}</label> <div type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" ></div></div>
+<div class="fieldbox">	
+   <label for="{{:name}}" class="field-label">{{:label}}</label> 
+   <div type="text" name="disp_{{:name}}" data-spine-prop="disp_{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" ></div>
+   <input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" size="2" maxlength="10" />
+   <div class="error-container"></div>
+</div>
 </script>
 
 <script type="text/template" id="tmpl_check_edit">
-<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Field Details" ></span></div>
+<div class="fieldbox">	<label for="{{:name}}" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Y" />
+<input type="text"name="hid_{{:name}}" data-spine-prop="hid_{{:name}}" data-spine-type="checkbox" size="1" maxlength="10" />
+	<div class="error-container"></div>
+</div>
 </script>
 
-<script type="text/template" id="tmpl_button_view">
-<div class="fieldbox">	<label for="caption">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="button"  value="Field Details" ></span></div>
+<script type="text/template" id="tmpl_radiogroup_edit">
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> 
+
+<div style="float:left;width:200px" class="ui-helper-clearfix">
+	<ul style="display:block; clear:both; list-style:none;padding:0px; margin: 0px" data-spine-prop="disp_{{:name}}" data-spine-type="disp_radiogroup">
+	{{for  radioList }} 
+	
+	<li > <input type="radio" name="{{: ~root.name}}" id="{{: #index}}_{{: ~root.name}}"   value="{{:val}}" /> 
+		<label for="{{: #index}}_{{: ~root.name}}" style="clear:both;float: none;">{{:label}}</label></li>
+	
+	{{/for}}
+	</ul>
+	<input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="radiogroup" size="1" maxlength="10" style="float: left"/>
+</div>
+	<div class="error-container"></div>
+
+</div>
 </script>
+
+
+
+<script type="text/template" id="tmpl_select_edit">
+<div class="fieldbox">	
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <select name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="" ></select>
+	<div class="error-container"></div>
+</div>
+</script>
+
+
+<script type="text/template" id="tmpl_button_view">
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="button"  value="Field Details" ></span>
+	<div class="error-container"></div>
+</div>
+</script>
+
 
 
 </head>
@@ -260,6 +368,7 @@ require(['df'], function(y){ x = y;});
 	<div id="dynaform"></div>
 	
 	<div style="clear: left"></div>
+	<div class="buttonpanel"><button id="btnSave">save</button>
 	<div id="dynsearch"></div> 
 	
 	<div style="clear: left"></div>

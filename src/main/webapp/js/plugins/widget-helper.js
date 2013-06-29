@@ -34,7 +34,10 @@ $.fn.addCssRule = function (rule, id){
  			var html =  $.templates("#tmpl_datepicker_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 			$form.append(html);	
 			var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-			var opts = $.parseJSON(field.widgetData)||{};
+			var opts = {};
+			if(field.widgetData != undefined && field.widgetData != ""){
+				opts = $.parseJSON(field.widgetData);
+			}
 			
 			fieldWidgets.datepicker(opts);
  		},
@@ -61,8 +64,11 @@ $.fn.addCssRule = function (rule, id){
 			var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
 			 
 			var fontSize = $(.9).toPx();
-			
-			fieldWidgets.spinner();
+			var opts = {};
+			if(field.widgetData != undefined && field.widgetData != ""){
+				opts = $.parseJSON(field.widgetData);
+			}
+			fieldWidgets.spinner(opts);
 		 	//fieldWidgets.height(20);
 		 	//fieldWidgets.parent().height(20)
 			fieldWidgets.outerHeight(fieldWidgets.parent().height());
@@ -111,22 +117,29 @@ $.fn.addCssRule = function (rule, id){
  			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 			$form.append(html);	
 			var fieldWidgets = $("[data-spine-prop='disp_"+field.name+"']", $form);
-			var opts = $.parseJSON(field.widgetData)||{};
-			
+			var opts = {};
+			if(field.widgetData != undefined && field.widgetData != ""){
+				opts = $.parseJSON(field.widgetData);
+			}
 			fieldWidgets.slider(opts);
 			var fieldWidgetsElm = $("[data-spine-prop='"+field.name+"']", $form);
 			var that = this;
 			fieldWidgets.on("slidechange",function(e,v){
-				fieldWidgetsElm.val(that.getValue(fieldWidgets));
+				fieldWidgetsElm.val( $(this).slider("value"));
 			});
+			
+			fieldWidgetsElm.on("change", function(){
+				fieldWidgets.slider("value", this.value);
+			});
+			
 			fieldWidgets.trigger("slidechange");
  		},
  		getValue: function($el){
- 			return $el.data('ui-slider').value();
+ 			return $el.val();
  		},
  		setValue: function($el, val){
- 			$el.data('ui-slider').value(val);
- 			fieldWidgets.trigger("slidechange");
+ 			//$el.data('ui-slider').value(val);
+ 			$el.trigger("change");
  		},
  		showError: function($el){
  			
@@ -378,7 +391,11 @@ $.fn.addCssRule = function (rule, id){
 				
 				//widget data populate
 				var strTmpl = "";
-				var widgetData=  $.parseJSON(field.widgetData);
+				var opts = {};
+				if(field.widgetData != undefined && field.widgetData != ""){
+					opts = $.parseJSON(field.widgetData);
+				}
+				var widgetData=  $.parseJSON(opts);
 				 
 			 	if(widgetData.datasource == "remote"){
 			 		$.get(widgetData.remoteurl, function(data){ 

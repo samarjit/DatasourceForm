@@ -220,7 +220,7 @@
 				save: function(){
 					//retrieve data
 					var that = this;
-					 $.each(datasource.options.model, function(i,field){
+					 $.each(that.options.model, function(i,field){
 						// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
 						var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
 						/*
@@ -236,8 +236,8 @@
 						*/
 						//selected index
 						var selectedIdx = 0;
-						if(this.options.selectedIndex != null && this.options.selectedIndex.length > 0){
-							selectedIdx = this.options.selectedIndex[0];
+						if(that.options.selectedIndex != null && that.options.selectedIndex.length > 0){
+							selectedIdx = that.options.selectedIndex[0];
 						}
 						that.result[selectedIdx][field.name] =  widgetHelper.getValue(fieldWidgets );
 						
@@ -245,7 +245,7 @@
 						//that.options.rawdata.data[0+that.options.paging.offset][field.name] =  widgetHelper.getValue(fieldWidgets );
 					 });
 					
-					console.log("saving ... "+JSON.stringify(this.result));
+					console.log("saving ... "+JSON.stringify(that.result));
 				}
 				
 	});
