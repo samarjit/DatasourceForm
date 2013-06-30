@@ -1,15 +1,21 @@
 ##Javascript Datasource##
-Javascript datasource is used to supply data to various data driven components. 
+Javascript datasource is used to supply data to various data driven components.
 
 Datasource is composed of two parts. 
-* Data Reader - used to convert any form of input data (CSV, JSON, ARRAY) to array, json.
-* Datasource Pager, filter, sorter, save , update.
-* Observable data so it can be linked with any widget that can read datasource events
+* Data Reader - used to convert any form of input data (CSV, JSON, ARRAY) to javascript array optionally
+ capture some extra met data alsso.
+* Datasource - Supports Pager, filter, sorter, save , update operations are supported on javascript array 
+  provided or read by Data Reader. This can also handle remote as well as local data using separate fetch url,
+  update url, delete url. 
+* Observable data - This is totally unrelated to datasource functionality of datasource, but this works well in 
+ conjunction with existing components that use datasource so it can be updated on datasource refresh events.
 
 ###Additional Components###
 There is a component where dynamic forms can be created only on the basis of model. 
 Other data driven component which can accept datasource are autocomplete, grids, combobox.
-The datasource is complete the still unreleased version of jquery-ui grid.
+This datasource is basically jquery dataview which is the still unreleased version of jquery-ui grid. Only
+DataReader is is integrted to create a standalone component with rich features that can be used completely by 
+json configuration without writing any javascritp code.
 
 ##Data Reader##
 This returns simple array or object based on configuration. 
@@ -23,7 +29,8 @@ The optiosn accepted are :
 				meta: "",
 				datatype: "json",
 				items: [],
-				resultFields: null//[{name: "name",  mapping: "name" /*can be xpath,json path or javascript function*/}, {name: "email"}]
+				resultFields: null//[{name: "name",  mapping: "name" /*can be xpath,json path
+				                  // or javascript function*/}, {name: "email"}]
 				,
 				csvFieldSep : ",",
 				csvRecordSep: "\r\n",
@@ -109,7 +116,7 @@ csvFieldDelimiter: '"'
 
 Suppose input data is 
 
-```
+```json
 120, samarjit, sam@email
 121, tutu, tutu@email
 ```
@@ -117,7 +124,8 @@ Suppose input data is
 And resultFields is `[{ name: "id", mapping: 0} , {name: "name", mapping: 1}, {name: "email", mapping: 2}]`
 
 Then the result data would be like.
-```
+
+```javascript
 [
   {
   id: 120,
@@ -132,7 +140,27 @@ Then the result data would be like.
 ]
 ```
 
-Although I have not yet writtn a wrapper for XML a similar wrapper can be written for XML also, where mappign will 
+TODO:
+Although I have not yet written a wrapper for XML a similar wrapper can be written for XML also, where mappign will 
 be xpath.
 
-Another feature is meta tags for getting the paging, filtering , sorting data apart form the Array data.
+Another feature is meta tags for getting the paging, limit, offset, filter criterion, sort id and sort order
+ of data apart form the Array data.
+ 
+
+```javascript
+ data = [{
+			name: "sam",
+			email: "sam@email"
+	        }];
+	 model = [ {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+			   {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+				];
+		
+		
+	 var datasource = $.uix.datasource({reader: new SchemaReader(), model: model ,rawdata: data, paging:{limit: 1} });
+	datasource.options.input ->  is data as defined above
+	datasource.refresh(); //initialize datasource mechanism
+	datasource.result -> internal object to be used by widgets that uses datasource	
+```
+

@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>D:\wsp\june13\DynamicForm\.README.md.html</title>
+
+
+<style type="text/css">
+
+.markdown-body {
+    border: 1px solid #CACACA;
+    padding: 30px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.markdown-body h2 {
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.markdown-body code {
+    white-space: nowrap;
+}
+
+.markdown-body code, .markdown-body tt {
+    background-color: #F8F8F8;
+    border: 1px solid #EAEAEA;
+    border-radius: 3px 3px 3px 3px;
+    margin: 0 2px;
+    padding: 0 5px;
+}
+
+.markdown-body .highlight pre, .markdown-body pre {
+    background-color: #F8F8F8;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+}
+
+pre, code, tt {
+    font-family: Consolas,"Liberation Mono",Courier,monospace;
+    font-size: 12px;
+}
+</style>
+
+
+<script type="text/javascript">
+
+function getDocumentScrollTop() 
+{
+   var res = document.body.scrollTop || document.documentElement.scrollTop || window.pageYOffset || 0;
+   // alert(res);
+   return res;
+}
+
+function setDocumentScrollTop(ypos) 
+{
+	window.scrollTo(0, ypos);
+}
+
+</script>
+
+
+</head>
+<body class="markdown-body">
+<h2>
+<a name="javascript-datasource" class="anchor" href="#javascript-datasource"><span class="octicon octicon-link"></span></a>Javascript Datasource</h2>
+
+<p>Javascript datasource is used to supply data to various data driven components.</p>
+
+<p>Datasource is composed of two parts. </p>
+
+<ul>
+<li>Data Reader - used to convert any form of input data (CSV, JSON, ARRAY) to javascript array optionally
+capture some extra met data alsso.</li>
+<li>Datasource - Supports Pager, filter, sorter, save , update operations are supported on javascript array 
+provided or read by Data Reader. This can also handle remote as well as local data using separate fetch url,
+update url, delete url. </li>
+<li>Observable data - This is totally unrelated to datasource functionality of datasource, but this works well in 
+conjunction with existing components that use datasource so it can be updated on datasource refresh events.</li>
+</ul><h3>
+<a name="additional-components" class="anchor" href="#additional-components"><span class="octicon octicon-link"></span></a>Additional Components</h3>
+
+<p>There is a component where dynamic forms can be created only on the basis of model. 
+Other data driven component which can accept datasource are autocomplete, grids, combobox.
+This datasource is basically jquery dataview which is the still unreleased version of jquery-ui grid. Only
+DataReader is is integrted to create a standalone component with rich features that can be used completely by 
+json configuration without writing any javascritp code.</p>
+
+<h2>
+<a name="data-reader" class="anchor" href="#data-reader"><span class="octicon octicon-link"></span></a>Data Reader</h2>
+
+<p>This returns simple array or object based on configuration. 
+This is similar to YUI schema reader.</p>
+
+<p>The optiosn accepted are :</p>
+
+<div class="highlight"><pre> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">rootList</span><span class="o">:</span> <span class="s2">"data"</span><span class="p">,</span>
+                <span class="nx">meta</span><span class="o">:</span> <span class="s2">""</span><span class="p">,</span>
+                <span class="nx">datatype</span><span class="o">:</span> <span class="s2">"json"</span><span class="p">,</span>
+                <span class="nx">items</span><span class="o">:</span> <span class="p">[],</span>
+                <span class="nx">resultFields</span><span class="o">:</span> <span class="kc">null</span><span class="c1">//[{name: "name",  mapping: "name" /*can be xpath,json path</span>
+                                  <span class="c1">// or javascript function*/}, {name: "email"}]</span>
+                <span class="p">,</span>
+                <span class="nx">csvFieldSep</span> <span class="o">:</span> <span class="s2">","</span><span class="p">,</span>
+                <span class="nx">csvRecordSep</span><span class="o">:</span> <span class="s2">"\r\n"</span><span class="p">,</span>
+                <span class="nx">csvFieldDelimiter</span><span class="o">:</span> <span class="s1">'"'</span>
+            <span class="p">};</span>
+</pre></div>
+
+<p>datatype - can be json,csv
+resultFields - Data transformation is done based on this parameter for JSON. There is data property mapping as well as
+data property filtering. </p>
+
+<h3>
+<a name="the-following-are-two-types-for-json-reader" class="anchor" href="#the-following-are-two-types-for-json-reader"><span class="octicon octicon-link"></span></a>The following are two types for JSON reader.</h3>
+
+<ul>
+<li>Type 1. <code>[{name: "name",  mapping: "full_name" }, {name: "email", mapping: "email_id"}]</code>
+</li>
+</ul><div class="highlight"><pre><span class="nx">If</span> <span class="nx">the</span> <span class="nx">data</span> <span class="nx">input</span> <span class="nx">is</span> 
+<span class="p">[{</span>
+  <span class="nx">full_name</span><span class="o">:</span> <span class="s2">"samarjit"</span><span class="p">,</span>
+  <span class="nx">email_id</span><span class="o">:</span> <span class="s2">"samarjit@email"</span><span class="p">,</span>
+  <span class="nx">extra</span><span class="o">:</span> <span class="s2">"extra value"</span>
+ <span class="p">},</span>
+ <span class="p">{</span>
+ <span class="nx">full_name</span><span class="o">:</span> <span class="s2">"tutu"</span><span class="p">,</span>
+ <span class="nx">email_id</span><span class="o">:</span> <span class="s2">"tutu@email"</span><span class="p">,</span>
+ <span class="nx">extra</span><span class="o">:</span> <span class="s2">"extra value2"</span>
+ <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="nx">After</span> <span class="nx">data</span> <span class="nx">is</span> <span class="nx">read</span> <span class="nx">by</span> <span class="nx">DataReader</span> <span class="nx">it</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">transformed</span> <span class="nx">to</span>
+<span class="p">[</span>
+  <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"samarjit"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"samarjit@email"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"tutu"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"tutu@email"</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+<ul>
+<li>Type 2. <code>["name","email"]</code>. This will be internally treated as <code>[{name: "name",  mapping: "name" }, {name: "email", mapping: "email"}]</code>
+</li>
+</ul><div class="highlight"><pre><span class="nx">If</span> <span class="nx">the</span> <span class="nx">data</span> <span class="nx">input</span> <span class="nx">is</span> 
+<span class="p">[{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"samarjit"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"samarjit@email"</span><span class="p">,</span>
+  <span class="nx">extra</span><span class="o">:</span> <span class="s2">"extra value"</span>
+ <span class="p">},</span>
+ <span class="p">{</span>
+ <span class="nx">name</span><span class="o">:</span> <span class="s2">"tutu"</span><span class="p">,</span>
+ <span class="nx">email</span><span class="o">:</span> <span class="s2">"tutu@email"</span><span class="p">,</span>
+ <span class="nx">extra</span><span class="o">:</span> <span class="s2">"extra value2"</span>
+ <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="nx">After</span> <span class="nx">data</span> <span class="nx">is</span> <span class="nx">read</span> <span class="nx">by</span> <span class="nx">DataReader</span> <span class="nx">it</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">transformed</span> <span class="nx">to</span>
+<span class="p">[</span>
+  <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"samarjit"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"samarjit@email"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"tutu"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"tutu@email"</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+<h3>
+<a name="csv-reader" class="anchor" href="#csv-reader"><span class="octicon octicon-link"></span></a>CSV reader</h3>
+
+<p>The csv data can be specified as a combination of fields seperators and record separators.</p>
+
+<p>The default comma seperated values with record separator </p>
+
+<pre><code>csvFieldSep : ",",
+csvRecordSep: "\r\n",  //it will handle line ending with either \r or ]n also
+csvFieldDelimiter: '"'
+</code></pre>
+
+<p>Suppose input data is </p>
+
+<div class="highlight"><pre><span class="mi">120</span><span class="err">,</span> <span class="err">samarjit,</span> <span class="err">sam@email</span>
+<span class="mi">121</span><span class="err">,</span> <span class="err">tutu,</span> <span class="err">tutu@email</span>
+</pre></div>
+
+<p>And resultFields is <code>[{ name: "id", mapping: 0} , {name: "name", mapping: 1}, {name: "email", mapping: 2}]</code></p>
+
+<p>Then the result data would be like.</p>
+
+<div class="highlight"><pre><span class="p">[</span>
+  <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">120</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"samarjit"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"samarjit@email"</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">121</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"tutu"</span><span class="p">,</span>
+  <span class="nx">email</span><span class="o">:</span> <span class="s2">"tutu@email"</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+<p>TODO:
+Although I have not yet written a wrapper for XML a similar wrapper can be written for XML also, where mappign will 
+be xpath.</p>
+
+<p>Another feature is meta tags for getting the paging, limit, offset, filter criterion, sort id and sort order
+ of data apart form the Array data.</p>
+
+<div class="highlight"><pre> <span class="nx">data</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="nx">name</span><span class="o">:</span> <span class="s2">"sam"</span><span class="p">,</span>
+            <span class="nx">email</span><span class="o">:</span> <span class="s2">"sam@email"</span>
+            <span class="p">}];</span>
+     <span class="nx">model</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"name"</span><span class="p">,</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">"string"</span><span class="p">,</span> <span class="nx">capturetype</span><span class="o">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="nx">displaytype</span><span class="o">:</span> <span class="s2">"displayText"</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s2">"Name"</span><span class="p">,</span> <span class="nx">searchable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">isPartOfKey</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">convertToModel</span><span class="o">:</span> <span class="kc">null</span> <span class="cm">/*view to model*/</span><span class="p">,</span> <span class="nx">convertToView</span><span class="o">:</span> <span class="kc">null</span> <span class="cm">/*model to view*/</span>    <span class="p">},</span>
+               <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">"email"</span><span class="p">,</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">"string"</span><span class="p">,</span> <span class="nx">capturetype</span><span class="o">:</span> <span class="s2">"email"</span><span class="p">,</span> <span class="nx">displaytype</span><span class="o">:</span> <span class="s2">"displayText"</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s2">"Email"</span><span class="p">,</span> <span class="nx">searchable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">isPartOfKey</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">convertToModel</span><span class="o">:</span> <span class="kc">null</span> <span class="cm">/*view to model*/</span><span class="p">,</span> <span class="nx">convertToView</span><span class="o">:</span> <span class="kc">null</span> <span class="cm">/*model to view*/</span>     <span class="p">},</span>
+                <span class="p">];</span>
+
+
+     <span class="kd">var</span> <span class="nx">datasource</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">uix</span><span class="p">.</span><span class="nx">datasource</span><span class="p">({</span><span class="nx">reader</span><span class="o">:</span> <span class="k">new</span> <span class="nx">SchemaReader</span><span class="p">(),</span> <span class="nx">model</span><span class="o">:</span> <span class="nx">model</span> <span class="p">,</span><span class="nx">rawdata</span><span class="o">:</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">paging</span><span class="o">:</span><span class="p">{</span><span class="nx">limit</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span> <span class="p">});</span>
+    <span class="nx">datasource</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">input</span> <span class="o">-&gt;</span>  <span class="nx">is</span> <span class="nx">data</span> <span class="nx">as</span> <span class="nx">defined</span> <span class="nx">above</span>
+    <span class="nx">datasource</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span> <span class="c1">//initialize datasource mechanism</span>
+    <span class="nx">datasource</span><span class="p">.</span><span class="nx">result</span> <span class="o">-&gt;</span> <span class="nx">internal</span> <span class="nx">object</span> <span class="nx">to</span> <span class="nx">be</span> <span class="nx">used</span> <span class="nx">by</span> <span class="nx">widgets</span> <span class="nx">that</span> <span class="nx">uses</span> <span class="nx">datasource</span> 
+</pre></div>
+</body>
+</html>

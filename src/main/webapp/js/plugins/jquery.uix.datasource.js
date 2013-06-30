@@ -1,9 +1,4 @@
 	ArrayReader = function (fields) {
-		
-		if ($.isFunction(window["wijmoASPNetParseOptions"])) {
-			wijmoASPNetParseOptions(fields);
-		}
-
 		if ($.isArray(fields)) {
 			this.fields = fields;
 		}
@@ -31,9 +26,6 @@
 					var i = {};
 					$.each(self.fields, function (index, field) {
 						// mapping property is a function,
-						// the return value will be used as value.
-						
-						//handle the juice
 						if($.type(field) == "string" ) {
 							var tmp = field;
 							field = {name: tmp, mapping: tmp};
@@ -135,6 +127,9 @@
 				//debugger; 
 				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
 				//return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
+				if($.type(obj) == "array"){
+					temp = obj;
+				}
 				var datasource = {data: temp} ;
 				if(this.options.datatype == 'text' || this.options.datatype == 'csv'){
 					datasource.data = parseCSV(obj, this.csvfieldSep, this.csvRecordSep, this.csvFieldDelimiter ) ;
@@ -169,7 +164,7 @@
 					selectedIndex: [],
 					paging :{ 
 						offset: 0,
-						limit: 2
+						limit: 1
 					},
 					dataLocation: "local",
 					pagingtype: "remote",

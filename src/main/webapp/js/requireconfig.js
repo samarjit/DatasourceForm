@@ -67,7 +67,7 @@ require.config({
         	 'gridnavigator',
         	// 'http://view.jqueryui.com/grid/grid-editing/localstore.js',
         	// 'http://view.jqueryui.com/grid/grid-editing/helpers.js',
-        	 'jquerytmpl',
+        	 'jsrender',
         	 'gridfilter',
         	 'gridsort',
         	 'grideditor'

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>TODO can</title>
+	<script src="../js/require.js"></script>
+	<script src="../js/requireconfig.js"></script>
+<script type="text/javascript">
+	define('df', [ 'app/cssloader', 'jqueryui', 'jsviews', 'canjs',
+			"uidataview", "uidataviewlocal", 'jsonpath', 'gridpager',
+			'gridfilter', 'gridfilterform', 'uigridmain', 'datasource',
+			'widgethelper', 'grideditor' ], function(cssloader) {
+		cssloader.loadCss([ 'jqueryui', 'uigrid' ], '', null);
+	 data = [{
+			name: "sam",
+			email: "sam@email"
+	        }];
+	 model = [ {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+			   {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+				];
+		
+		
+	 var datasource = $.uix.datasource({reader: new SchemaReader(), model: model ,rawdata: data, paging:{limit: 1} });
+		$.templates("#tp").link(".todocontainer" ,data)
+		return {ds: datasource }
+	});
+	var x;
+	require(["df"], function (a){ x = a; })
+</script>
+</head>
+<body>
+<script type="text/tmpl" id="tp">
+{{:name}} {{:email}} sss <input type="text"   data-link="name" />
+</script>
+	<div class="todocontainer">
+		
+	</div>
+</body>
+</html>
