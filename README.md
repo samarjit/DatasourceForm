@@ -2,10 +2,10 @@
 Javascript datasource is used to supply data to various data driven components.
 
 Datasource is composed of two parts. 
-* Data Reader - used to convert any form of input data (CSV, JSON, ARRAY) to javascript array optionally
+* SchemaReader - used to convert any form of input data (CSV, JSON, ARRAY) to javascript array optionally
  capture some extra met data alsso.
 * Datasource - Supports Pager, filter, sorter, save , update operations are supported on javascript array 
-  provided or read by Data Reader. This can also handle remote as well as local data using separate fetch url,
+  provided or read by SchemaReader. This can also handle remote as well as local data using separate fetch url,
   update url, delete url. 
 * Observable data - This is totally unrelated to datasource functionality of datasource, but this works well in 
  conjunction with existing components that use datasource so it can be updated on datasource refresh events.
@@ -14,10 +14,10 @@ Datasource is composed of two parts.
 There is a component where dynamic forms can be created only on the basis of model. 
 Other data driven component which can accept datasource are autocomplete, grids, combobox.
 This datasource is basically jquery dataview which is the still unreleased version of jquery-ui grid. Only
-DataReader is is integrted to create a standalone component with rich features that can be used completely by 
+SchemaReader is is integrted to create a standalone component with rich features that can be used completely by 
 json configuration without writing any javascritp code.
 
-##Data Reader##
+##SchemaReader##
 This returns simple array or object based on configuration. 
 This is similar to YUI schema reader.
 
@@ -61,7 +61,7 @@ If the data input is
  }
 ]
 
-After data is read by DataReader it will be transformed to
+After data is read by SchemaReader it will be transformed to
 [
   {
   name: "samarjit",
@@ -90,7 +90,7 @@ If the data input is
  }
 ]
 
-After data is read by DataReader it will be transformed to
+After data is read by SchemaReader it will be transformed to
 [
   {
   name: "samarjit",

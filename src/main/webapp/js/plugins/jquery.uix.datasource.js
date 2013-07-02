@@ -125,6 +125,9 @@
 			
 			this.read = function(obj){
 				//debugger; 
+				if($.type(obj)== "string" && !(this.options.datatype == 'text' || this.options.datatype == 'csv')){
+					obj = $.parseJSON(obj);
+				}
 				var temp = jsonPath(obj,"$."+ this.options.rootList)[0];
 				//return $.map(temp[0], function(o) {   if(o.name) return {name: "samar"}; })
 				if($.type(obj) == "array"){

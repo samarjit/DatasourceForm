@@ -1,3 +1,5 @@
+var screenmeta = {screenData: {screenMeta:{ JS_FILE:""}}};
+
 //em px converter from filamentgroup
 $.fn.toEm = function(settings){
 	settings = jQuery.extend({
@@ -117,10 +119,8 @@ $.fn.addCssRule = function (rule, id){
  			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
 			$form.append(html);	
 			var fieldWidgets = $("[data-spine-prop='disp_"+field.name+"']", $form);
-			var opts = {};
-			if(field.widgetData != undefined && field.widgetData != ""){
-				opts = $.parseJSON(field.widgetData);
-			}
+			var opts = (field.widgetData!=null)?$.parseJSON(field.widgetData)||{}:{};
+			
 			fieldWidgets.slider(opts);
 			var fieldWidgetsElm = $("[data-spine-prop='"+field.name+"']", $form);
 			var that = this;
@@ -128,17 +128,19 @@ $.fn.addCssRule = function (rule, id){
 				fieldWidgetsElm.val( $(this).slider("value"));
 			});
 			
-			fieldWidgetsElm.on("change", function(){
-				fieldWidgets.slider("value", this.value);
+			fieldWidgetsElm.on("change", function(e,v){
+				$(this).parent().find("[data-spine-prop='disp_"+$(this).data("spine-prop")+"']").data('ui-slider').value(this.value);
 			});
 			
 			fieldWidgets.trigger("slidechange");
  		},
  		getValue: function($el){
- 			return $el.val();
+ 			return $el.val();//$el.data('ui-slider').value();;
  		},
  		setValue: function($el, val){
+ 			$el.val(val);
  			//$el.data('ui-slider').value(val);
+ 			//$el.parent().find("[data-spine-prop='disp_"+$el.data("spine-prop")+"']").trigger("slidechange");
  			$el.trigger("change");
  		},
  		showError: function($el){
@@ -204,14 +206,16 @@ $.fn.addCssRule = function (rule, id){
  			var html =  $.templates("#tmpl_text_view").render(field); // can.view("#tmpl_datepicker_"+mode, field);
 			$form.append(html);	
 			var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
-			fieldWidgets.on("change",":input", function(){ $("#disp_"+this.id).text(this.value); });
+			fieldWidgets.parent().on("change",":input", function(){
+				$("#disp_"+this.id).text(this.value);
+				});
  		},
  		getValue: function($el){
- 			return $el.text();
+ 			return $el.val();
  		},
  		setValue: function($el, val){
- 			$el.text(val);
- 			fieldWidgets.trigger("change");
+ 			$el.val(val);
+ 			$el.trigger("change");
  		},
  		showError: function($el){
  			
@@ -259,6 +263,12 @@ $.fn.addCssRule = function (rule, id){
 			var that = this;
 			fieldWidgets.on("change", function(){
 				fieldWidgetHid.val( that.getValue(fieldWidgets));
+
+				require([screenmeta.screenData.screenMeta.JS_FILE], function(screenJs){
+					if(screenJs != undefined && field.eventOnchange != undefined && field.eventOnchange != "")
+					screenJs[field.eventOnchange]();
+				});
+				
 			});
 			fieldWidgets.trigger("change");
  		},
@@ -301,10 +311,11 @@ $.fn.addCssRule = function (rule, id){
 	 		render: function ($form, field,  mode  ){
 	 			var radioList = [{val: 'Y', label: 'Yes'},{val: 'N', label:'No' }];
 	 			field.radioList = radioList;
+	 			var wigData = null;
 	 			if(field.widgetData != null && field.widgetData != ""){
 	 				try{
-	 					 
-	 					var radList = $.parseJSON(field.widgetData).radioList;
+	 					 wigData = $.parseJSON(field.widgetData)
+	 					var radList = wigData.radioList;
 	 					var val = eval("'use strict'; var x = "+radList+";x")
 	 					field.radioList =val;// $.parseJSON(radList);
 	 				}catch(e){
@@ -330,6 +341,8 @@ $.fn.addCssRule = function (rule, id){
 				var fieldWidgets = $("[data-spine-prop='disp_"+field.name+"']", $form);
 				fieldWidgets.css("margin","0px");
 				
+				if(wigData.floatLeftProp)fieldWidgets.find("li").css("float","left");
+					
 				var that = this;
 				fieldWidgets.on("change","li", function(e, $el){
 					
@@ -345,7 +358,7 @@ $.fn.addCssRule = function (rule, id){
 					}
 				});
 				//fix line-height
-				fieldWidgets.parent().parent().find(">label").css("line-height",fieldWidgets.innerHeight()+"px");
+				fieldWidgets.parent().parent().find(">label").css("line-height",fieldWidgets.closest("div").innerHeight()+"px");
 	 		},
 	 		getValue: function($el){
 	 			$rad = $el.parent().find(":input[type=radio]");
@@ -391,11 +404,7 @@ $.fn.addCssRule = function (rule, id){
 				
 				//widget data populate
 				var strTmpl = "";
-				var opts = {};
-				if(field.widgetData != undefined && field.widgetData != ""){
-					opts = $.parseJSON(field.widgetData);
-				}
-				var widgetData=  $.parseJSON(opts);
+				var widgetData=  $.parseJSON(field.widgetData);
 				 
 			 	if(widgetData.datasource == "remote"){
 			 		$.get(widgetData.remoteurl, function(data){ 
@@ -443,7 +452,7 @@ $.fn.addCssRule = function (rule, id){
 			 			
 			 		});
 			 	}else if(widgetData.datasource == "local"){
-			 		if($.type(widgetData.localdata ) == "object"){
+			 		if($.type(widgetData.localdata ) == "array"){
 				 		$.each(widgetData.localdata, function(io,vo){
 					 		strTmpl += "<option value='"+vo[0]+"'>"+vo[1]+"</option>";
 						});
@@ -485,12 +494,18 @@ $.fn.addCssRule = function (rule, id){
 						require([screenmeta.screenData.screenMeta.JS_FILE], function(screenJs){
 							if(screenJs != undefined && widgetData.onChangeFnName != undefined && widgetData.onChangeFnName != "")
 							screenJs[widgetData.onChangeFnName]();
+							
+							if(screenJs != undefined && field.eventOnchange != undefined && field.eventOnchange != "")
+							screenJs[field.eventOnchange]();
 						});
 						
 						//hide/unhide
 						var hideUnhideData = widgetData.unHidePanelData;
-						if(hideUnhideData != undefined){
+						
+						if(hideUnhideData != undefined && hideUnhideData!=""){
+							
 						var hideUnhideObj = new SchemaReader({datatype:"csv"}).read(hideUnhideData);
+						
 						var selectedVal = that.getValue(fieldWidgets);
 							for(i in hideUnhideObj){
 								if(hideUnhideObj[i][0] !=  selectedVal){
