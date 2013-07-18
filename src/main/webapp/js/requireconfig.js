@@ -43,7 +43,8 @@ require.config({
         widgethelper: '../js/plugins/widget-helper',
         grideditor: '../js/plugins/grid-editor',
         grideditorinline: '../js/plugins/grid-editor-inline',
-        
+        menubar: '../js/plugins/jquery.ui.menubar',
+       
     },
     shim: {
         jqueryui: {
@@ -121,6 +122,8 @@ require.config({
         canui: ['jquery','canjs','jquerypp'],
         gridpager: ['jqueryui'],
         gridfilter: ['jqueryui'],
-        gridfilterform: ['jqueryui']
+        gridfilterform: ['jqueryui'],
+        menubar: ['jqueryui'],
+        
     }
 });
