@@ -1,0 +1,22 @@
+.uix-tree{
+	
+}
+.uix-tree-handle{
+	position: absolute;
+	left: -18px;
+	top: 1px;
+}
+.uix-tree li{
+	position: relative;
+}
+
+ 
+.uix-tree.ui-widget-content li.ui-state-default {
+	background: none;
+	border: 0px;
+}
+
+.uix-tree li a{
+	display: block;
+	border:1px solid transparent;
+}

@@ -1,0 +1,12 @@
+<root>
+<module>test</module>
+<crud>
+	<sql id="query1" outstack="" msg="" error="" pagination="false">select sysdate "SYSDATE" from dual</sql>
+	<sql id="query2" outstack="" >select sysdate "SYSDATE2" from dual</sql>
+</crud>
+	
+<cmds>
+	<cmd name="testcmd" batch="query1,query2" ></cmd>
+</cmds>
+	
+</root>
