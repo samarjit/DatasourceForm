@@ -1,5 +1,5 @@
 require.config({
-    baseUrl: '../jsp',
+    //baseUrl: '../jsp',
     paths: {
         app: '../js/app',
         jquerygrid: 'http://view.jqueryui.com/grid',
@@ -54,7 +54,7 @@ require.config({
         widgethelper: ['jqueryui'],
         uidataview: ['jqueryui'],
         uidataviewlocal: ['jqueryui','uidataview'],
-        datasource: ['uidataviewlocal'],
+        datasource: ['uidataviewlocal','jsonpath'],
         uigrid:['uigridmain'],
         uigridmain: {
         	//exports: "$", 

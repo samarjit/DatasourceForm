@@ -3,25 +3,256 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Datasource examples</title>
-	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="js/require.js"></script>
+	<script src="js/requireconfig.js"></script>
+	<link rel="stylesheet" href="css/plugins/jquery-ui-1.10.0.css">
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
+	<style>
+	ul,li{
+	padding: 0;
+	margin: 0;
+	}
+	.bs-docs-sidebar{
+	  top: 40px;
+	}
+	
+	.bs-docs-sidenav {
+		width: 228px;
+		margin: 30px 0 0;
+		padding: 0;
+		background-color: #fff;
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+		-webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+		-moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+		box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	}
+	
+	.bs-docs-sidenav > li >a {
+		display: block;
+	  width: 190px \9;
+	  margin: 0 0 -1px;
+	  padding: 8px 14px;
+	  border: 1px solid #e5e5e5;
+	}
+	.bs-docs-sidenav > li:first-child > a {
+		-webkit-border-radius: 6px 6px 0 0;
+		-moz-border-radius: 6px 6px 0 0;
+		border-radius: 6px 6px 0 0;
+	}
+
+.bs-docs-sidenav > li:last-child > a {
+	-webkit-border-radius: 0 0 6px 6px;
+		-moz-border-radius: 0 0 6px 6px;
+			border-radius: 0 0 6px 6px;
+}
+
+	
+	 
+	/* Chevrons */
+.bs-docs-sidenav .icon-chevron-right {
+  float: right;
+  margin-top: 2px;
+  margin-right: -6px;
+  opacity: .25;
+}
+.bs-docs-sidenav > li > a:hover {
+  background-color: #f5f5f5;
+}
+.bs-docs-sidenav a:hover .icon-chevron-right {
+  opacity: .5;
+}
+.bs-docs-sidenav .active .icon-chevron-right,
+.bs-docs-sidenav .active a:hover .icon-chevron-right {
+  background-image: url(../img/glyphicons-halflings-white.png);
+  opacity: 1;
+}
+.bs-docs-sidenav.affix {
+  top: 40px;
+}
+.bs-docs-sidenav.affix-bottom {
+  position: absolute;
+  top: auto;
+  bottom: 270px;
+}
+
+
+	</style>
+	
+	<script>
+	var reader = null;
+
+var data1= [{
+  name: "samarjit",
+  email: "samarjit@email",
+  extra: "extra value"
+ },
+ {
+ name: "tutu",
+ email: "tutu@email",
+ extra: "extra value2"
+ }
+];
+
+
+var data3= [{
+  full_name: "samarjit",
+  email_id: "samarjit@email",
+  extra: "extra value"
+ },
+ {
+ full_name: "tutu",
+ email_id: "tutu@email",
+ extra: "extra value2"
+ }
+];
+
+
+	require.config({baseUrl: "./test" });
+		require(['jqueryui','datasource'], function(){
+
+		reader = new SchemaReader({
+			resultFields: [{name: "name",mapping : "name"} , {name: "email", mapping: "email"}]
+		});
+		
+		var res1 = reader.read(data1);
+		$("#transformer1").text(JSON.stringify(reader.options.resultFields));
+		$("#result1").text(JSON.stringify(res1));
+		
+		
+		reader.options.resultFields = ['name','email'];
+		var res2 = reader.read(data1);
+		$("#transformer2").text(JSON.stringify(reader.options.resultFields));
+		$("#result2").text(JSON.stringify(res2));
+		
+		reader.options.resultFields = [{name: "name",mapping : "full_name"} , {name: "email", mapping: "email_id"}];
+		var res3 = reader.read(data3);
+		$("#transformer3").text(JSON.stringify(reader.options.resultFields));
+		$("#result3").text(JSON.stringify(res3));
+		
+		
+		var data4 = null;
+		$.get("data.txt",function (data){
+			data4  = data;
+			var reader1 = new SchemaReader();
+			reader1.options.datatype="csv";
+			reader1.options.resultFields = [{name:"name",mapping: 0}, {name: "email",mapping:2}];
+		
+			var res4 = reader1.read(data4);
+			$("#data4").text(data4); 
+			$("#transformer4").text(JSON.stringify(reader1.options.resultFields));
+			$("#result4").text(JSON.stringify(res4));
+		
+		});
+		
+		var data5 = "sam#sgp#2011!tutu#ind#2012";
+		
+		reader.options.datatype="csv";
+		reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
+		reader.options.csvfieldSep = "#";
+		reader.options.csvRecordSep = "!";
+		var res5 = reader.read(data5);
+		$("#data5").text(data5); 
+			$("#transformer5").text(JSON.stringify(reader.options.resultFields));
+			$("#result5").text(JSON.stringify(res5));
+		
+		});
+	</script>
 </head>
 <body>
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span2">
-     DataSource Examples
-    </div>
-    <div class="span10">
-     <h1>This is a local datasource example.</h1>
-	
-	
-	All in one working example : <a href="test/dynamic_form.html">dynamic form + grid and common pager</a>
-	
+   
+	<div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+          <li class="active"><a href="#typography"><i class="icon-chevron-right"></i> Main</a></li>
+          <li><a href="#code"><i class="icon-chevron-right"></i> data source</a></li>
+          <li><a href="#toc2"><i class="icon-chevron-right"></i> Data mapping shortcut</a></li>
+          <li><a href="#toc3"><i class="icon-chevron-right"></i> Data mapping</a></li>
+          <li><a href="#toc4"><i class="icon-chevron-right"></i> CSV and filtering</a></li>
+          <li><a href="#toc5"><i class="icon-chevron-right"></i> Custom text file</a></li>
+        </ul>
+      </div>
+    <div class="span9 ">
+     <div class="section">
+		<h3>This is a local datasource example.</h3>
+		All in one working example : <a href="test/dynamic_form.html">dynamic form + grid and common pager</a>
+		</div>	
+		<div class="section" id="#toc1">
+			<h3>SchemaReader</h3>
+			This section shows filtering
+			
+			Data
+			<pre>
+var data1= [{
+  full_name: "samarjit",
+  email_id: "samarjit@email",
+  extra: "extra value"
+ },
+ {
+ full_name: "tutu",
+ email_id: "tutu@email",
+ extra: "extra value2"
+ }
+];
+			</pre>
+			
+Transformer1:<pre id="transformer1">			</pre>
+Result1:		<pre id="result1"></pre>
 
-    </div>
-  </div>
-</div>
+<a name="toc2">Data Mapping shortcut</a><br/>
+Transformer2:<pre id="transformer2">			</pre>
+Result2:		<pre id="result2"></pre>
+
+
+<a name="toc3">Data Mapping </a>
+<pre>
+var data3= [{
+  full_name: "samarjit",
+  email_id: "samarjit@email",
+  extra: "extra value"
+ },
+ {
+ full_name: "tutu",
+ email_id: "tutu@email",
+ extra: "extra value2"
+ }
+];
+</pre>
+
+Transformer3:<pre id="transformer3">			</pre>
+Result3:		<pre id="result3"></pre>
+
+
+<a name="toc4">CSV Reading with filtering </a> <br/>
+Data:
+CSV reader is quite powerful one. 
+Record delimiter (,) and Record seperator (CR LF or LF or CR).
+<pre id="data4">
+</pre>		
+
+Transformer:<pre id="transformer4"></pre>
+Result <pre id="result4"></pre>
+
+<a name="toc5">Custom Text or CSV Reading specified record sep (#) and delim (!)</a> <br/>
+Data:
+CSV reader with arbritrary record delimiter and arbritary record seperator.
+Even records can be optionally enclosed by some arbritrary character (for csv default is &quot;)
+<pre id="data5">
+</pre>		
+
+Transformer:<pre id="transformer5"></pre>
+Result <pre id="result5"></pre>
+
+
+		</div>
+		  
+    </div><!--span9 fluid-->
+	  
+  </div><!--row fluid-->
+  
+</div><!--container fluid-->
  
  
 	
