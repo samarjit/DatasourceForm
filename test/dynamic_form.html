@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Dynamic form</title>
+<script src="../js/require.js"> </script>
+<script src="../js/requireconfig.js"> </script>
+
+<style type="text/css">
+.ui-widget, body{
+font-size: .9em!important;
+}
+
+label{
+width: 300px;
+font-family: arial; 
+display: inline-block;
+box-sizing: border-box;
+}
+input,select{
+width: 150px;
+padding: 0;
+box-sizing: border-box;
+}
+.even-odd-container{
+
+}
+.even-odd-container div{
+box-sizing: border-box;
+}
+.fieldbox{
+min-width: 450px;
+float:left;
+padding: 5px;
+margin: 0px;
+} 
+.fieldbox label{
+float: left;
+display: inline-block;
+
+}
+
+
+
+
+.ui-grid .ui-selecting td { background: #eef!important; }
+.ui-grid .ui-selected td { background: #ddf!important; }
+thead td { text-align: center; }
+
+	
+</style>
+<script type="text/javascript">
+define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidataviewlocal",  'jsonpath', 'gridpager','gridfilter','gridfilterform','uigridmain', 'datasource','widgethelper', 'grideditor'],function(cssloader){
+	cssloader.loadCss(['jqueryui','uigrid'],'',null);
+	var data = {
+			page: 1,
+			total: 20, 
+			data: [{name: "samarjit", email: "samarjit.s@ycs.com", dob: "2013-06-12", ismarried: "N", num_cars: 5, num_child: 2},
+	           {name: "siva", email: "siva.koti@ycs.com", dob: "2012-08-12", ismarried: "Y", num_cars: 20, num_child: 3},
+	           {name: "sam", email: "sam@ycs.com", dob: "2010-04-27", ismarried: "Y", num_cars: 10, num_child: 7}
+			]
+	};
+	
+	var model = [
+	             {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "dob", type: "string", capturetype: "datepicker", displaytype: "displayText", label: "Date Of Birth", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "ismarried", type: "string", capturetype: "checkbox", displaytype: "displayText", label: "Married", searchable: false, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_cars", type: "int", capturetype: "slider", displaytype: "displayText", label: "Num Cars", searchable: false, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+	             {name: "num_child", type: "int", capturetype: "spinner", displaytype: "displayText", label: "Num Child", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
+	            ];
+
+	 
+
+	var datasource = $.uix.datasource({model: model, rawdata: data, paging:{limit: 1} });
+	var panel_fields = ["name","email","dob","ismarried"];
+	
+	
+	
+	
+ 	
+	function createViewController(containerEl, datasource, mode){
+		$(containerEl).addClass("even-odd-container");
+		var $form = $(containerEl);
+		$form.empty();
+		
+		
+		
+		//create fields
+		 $.each(datasource.options.model, function(i, field){
+			// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld.name) return i; });
+			widgetHelper.render($form, field, mode); 
+			/*if(field.capturetype == "datepicker" ){
+				 
+				  
+				
+			 }else if(field.capturetype == "spinner" ){
+				 var html =  $.templates("#tmpl_number_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+					$form.append(html);	
+					var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+					fieldWidgets.spinner();
+			 }else if(field.capturetype == "slider" ){
+				 var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+					$form.append(html);	
+					var fieldWidgets = $("[data-spine-prop='"+field.name+"']");
+					//fieldWidgets.prop("type","text");
+					fieldWidgets.slider();
+			 
+			 }else{
+				 
+				var html =  $.templates("#tmpl_text_"+mode).render(field);
+					$form.append(html); 
+			 }*/
+				 
+		 });
+		 
+		//populate data
+		 $.each(datasource.options.model, function(i,field){
+			// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld) return i; });
+			var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+			widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+			/*if(fieldWidgets.data("spine-type") == "datepicker"){		widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+				
+			}else if(fieldWidgets.data("spine-type") == "slider"){				fieldWidgets.slider("value",datasource.get(field.name) );
+				
+			}else if(fieldWidgets.data("spine-type") == "spinner"){				fieldWidgets.spinner("value",datasource.get(field.name) );
+				
+			}else { 			fieldWidgets.val( datasource.get(field.name) );
+			}
+			
+			
+			if(mode == "view"){
+				if(fieldWidgets.data("spine-type") == "datepicker"){
+					fieldWidgets.text( datasource.get(field.name) )
+				}else {
+					fieldWidgets.text( datasource.get(field.name) );
+				}
+			}
+			*/
+			
+		 });
+	}
+	
+	
+	
+	function createSearchForm(containerEl, datasource, mode){
+		$(containerEl).addClass("even-odd-container");
+		var $form = $(containerEl);
+		$form.empty();
+		
+		datasource.refresh();
+		var searchModel  = $.map(datasource.options.model, function (v,i){ if( v.searchable == "true"||v.searchable == true ) return v; }); 
+		$.each(searchModel, function(i, field){
+			console.log("rendering search..")
+			widgetHelper.render($form, field, "edit"); 
+		});
+		////----create button panel----
+		$("<hr style='clear:left'/>").appendTo($form);
+		var btnSearch = $("<button data-spine-type='button' data-spine-prop='btnSearch'>Search</button>").button().appendTo($form);
+		var btnClearSearch = $("<button data-spine-type='button' data-spine-prop='btnClearFilter'>Clear Filter</button>").button().appendTo($form);
+		
+		btnSearch.click(function(){
+			$.each(searchModel, function(i, field){
+				console.log("filtering search..");
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				if(widgetHelper.getValue(fieldWidgets) != null && widgetHelper.getValue(fieldWidgets) != "")
+				datasource.option("filter."+field.name,{operator: "like", value: widgetHelper.getValue(fieldWidgets) })
+				 
+			});
+			
+			datasource.refresh();
+		});
+		
+		btnClearSearch.click(function(){
+			$.each(searchModel, function(i, field){
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				widgetHelper.setValue(fieldWidgets,"");
+					
+				datasource.option("filter", null);
+				datasource.refresh(); 
+			});
+			
+		});
+	}
+	
+	var selected = [], selectedIndex = [];	
+	var grid  = $("#dynagrid").grid({source: datasource, 
+		columns: $.map(datasource.options.model, function(v,i){
+			v.editor = v.capturetype;
+			v.property = v.name;  return v; 
+			}) 
+		})
+	/*grid.gridEditor({
+		items: "td:not(:has(button))"
+	});*/
+	grid.gridSort();
+	grid.gridFilter();
+	/*grid.gridSelectable({
+			selected: selected,
+			selectedIndex: selectedIndex,
+			onSelectRow: function(){ console.log('selected something '+this.selectedIndex); datasource.refresh();}
+		});*/
+	$("#dynpager").pager({source: datasource}); 
+	 
+	
+	createViewController("#dynaform",datasource, "edit");
+	createSearchForm ("#dynsearch",datasource, "search");
+	
+	//event triggered by dataview request response change
+	$(datasource).on("dataviewresponse", function(){
+		createViewController("#dynaform",datasource, "edit");
+	});
+	
+	$("#btnSave").button().click(function(){
+		datasource.save();
+		datasource.refresh();
+	});
+	
+	datasource.refresh();
+	
+	return {
+		xdata: data, model: model,reader: SchemaReader, datasource: datasource, createViewController: createViewController, createSearchForm: createSearchForm , selected : selectedIndex
+	}
+});
+var x = null;
+require(['df'], function(y){ x = y;});
+</script>	
+
+
+
+<script type="text/template" id="tmpl_datepicker_edit">
+<div class="fieldbox">	
+<div class='my-datepicker-wrapper'>
+	<label for="{{:name}}" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label>  <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" style="position:relative;z-index:2" /></div>
+	<div class="error-container"></div>
+</div>	
+</script>
+ 
+<script type="text/template" id="tmpl_text_edit">
+<div class="fieldbox">	
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <input type="text" name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="{{:defaultValue}}" />
+	<div class="error-container"></div>
+</div>
+</script>
+
+
+
+<script type="text/template" id="tmpl_text_view">
+<div class="my-displayfield-wrapper">
+	<div class="fieldbox">	<label for="caption" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+	</label><input type='hidden' data-spine-prop="{{:name}}" name='{{:name}}' id='{{:name}}' data-spine-type="displayText" value="{{:defaultValue}}" /> <span type="text" name="disp_{{:name}}"   >{{:defaultValue}}</span></div>
+	<div class="error-container"></div>	
+</div>
+</script>
+
+<script type="text/template" id="tmpl_label_view">
+ <label for="{{:name}}"  data-spine-prop="{{:name}}" data-spine-type="label" style="line-height:25px" class="field-label" >
+ 	{{if defaultValue}}
+ 		{{:defaultValue}}
+ 	{{else}}
+ 		{{:label}}
+ 	{{/if}}</label>
+ 	<div class="error-container"></div>
+</div>
+
+</script>
+
+<script type="text/template" id="tmpl_textarea_edit">
+<div class="fieldbox">	<label for="{{:name}}" style='display:inline-block;width:50%' class="field-label">{{:label}} 
+	{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+	</label><textarea type="text" name="{{:name}}" id='{{:name}}' data-spine-prop="{{:name}}"  data-spine-type="displayText"  >{{:defaultValue}}</textarea>
+	<div class="error-container"></div>
+</div>
+</script>
+
+<script type="text/template" id="tmpl_number_edit">
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}"  value="Field Details" />
+	<div class="error-container"></div>
+</div>
+
+</script>
+
+<script type="text/template" id="tmpl_spinner_edit">
+<div class="fieldbox">	
+<label for="{{:name}}" class="field-label">
+{{:label}}
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <input type="text" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="spinner"  value="" />
+<div class="error-container"></div>
+</div>
+</script>
+ 
+ 
+ 
+<script type="text/template" id="tmpl_slider_edit">
+<div class="fieldbox">	
+   <label for="{{:name}}" class="field-label">{{:label}}</label> 
+   <div type="text" name="disp_{{:name}}" data-spine-prop="disp_{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" ></div>
+   <input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" size="2" maxlength="10" />
+   <div class="error-container"></div>
+</div>
+</script>
+
+<script type="text/template" id="tmpl_check_edit">
+<div class="fieldbox">	<label for="{{:name}}" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Y" />
+<input type="text"name="hid_{{:name}}" data-spine-prop="hid_{{:name}}" data-spine-type="checkbox" size="1" maxlength="10" />
+	<div class="error-container"></div>
+</div>
+</script>
+
+<script type="text/template" id="tmpl_radiogroup_edit">
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> 
+
+<div style="float:left;width:200px" class="ui-helper-clearfix">
+	<ul style="display:block; clear:both; list-style:none;padding:0px; margin: 0px" data-spine-prop="disp_{{:name}}" data-spine-type="disp_radiogroup">
+	{{for  radioList }} 
+	
+	<li > <input type="radio" name="{{: ~root.name}}" id="{{: #index}}_{{: ~root.name}}"   value="{{:val}}" /> 
+		<label for="{{: #index}}_{{: ~root.name}}" style="clear:both;float: none;">{{:label}}</label></li>
+	
+	{{/for}}
+	</ul>
+	<input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="radiogroup" size="1" maxlength="10" style="float: left"/>
+</div>
+	<div class="error-container"></div>
+
+</div>
+</script>
+
+
+
+<script type="text/template" id="tmpl_select_edit">
+<div class="fieldbox">	
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> <select name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="" ></select>
+	<div class="error-container"></div>
+</div>
+</script>
+
+
+<script type="text/template" id="tmpl_button_view">
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="button"  value="Field Details" ></span>
+	<div class="error-container"></div>
+</div>
+</script>
+
+
+
+</head>
+
+<body>
+	
+	<div id="dynaform"></div>
+	
+	<div style="clear: left"></div>
+	<div class="buttonpanel"><button id="btnSave">save</button>
+	<div id="dynsearch"></div> 
+	
+	<div style="clear: left"></div>
+	<div id='dynpager' ></div>
+	
+	 
+	
+	<div style="clear: left"></div>
+	<table id="dynagrid"><thead></thead><tbody></tbody><tfoot ></tfoot></table>
+</body>
+</html>

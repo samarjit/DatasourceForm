@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>CanUI table</title>
+
+<script src="../js/require.js"> </script>
+<script src="../js/requireconfig.js"> </script>
+<script type="text/javascript">
+require(['app/cssloader','jqueryui','canui','canjs','jquerypp'],function(cssloader){
+	cssloader.loadCss(['jqueryui'],'',null);
+	var people = new can.Observe.List([{        
+	    firstname : "John",
+	    lastname : "Doe",
+	    age : 26
+	}]);
+
+	$('#grid').grid({
+	    columns : [{
+	        header : "First name",
+	        content : "firstname"
+	    },
+	    {
+	        header : "Last name",
+	        content : "lastname"
+	    }
+	    ],
+	    list : people
+	});
+	
+	
+})
+</script>	
+</head>
+<body>
+	<table id="grid"></table>
+	
+	<div style="height: 200px;">
+  <table id="tblscroll">
+    <thead>
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Jean-Luc</td>
+        <td>Picard</td>
+      </tr>
+      <tr>
+        <td>William</td>
+        <td>Adama</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
