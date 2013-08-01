@@ -51,7 +51,7 @@ require.config({
            // exports: "$",
             deps: ['jquery']
         },
-        widgethelper: ['jqueryui'],
+        widgethelper: ['jqueryui','jsrender'],
         uidataview: ['jqueryui'],
         uidataviewlocal: ['jqueryui','uidataview'],
         datasource: ['uidataviewlocal','jsonpath'],

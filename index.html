@@ -108,9 +108,9 @@ var data3= [{
  }
 ];
 
-
+var ds = null;
 	require.config({baseUrl: "./test" });
-		require(['jqueryui','datasource'], function(){
+		require(['jqueryui','datasource', 'jsrobservable','widgethelper', 'gridpager'], function(){
 
 		reader = new SchemaReader({
 			resultFields: [{name: "name",mapping : "name"} , {name: "email", mapping: "email"}]
@@ -148,14 +148,59 @@ var data3= [{
 		
 		var data5 = "sam#sgp#2011!tutu#ind#2012";
 		
-		reader.options.datatype="csv";
-		reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
-		reader.options.csvfieldSep = "#";
-		reader.options.csvRecordSep = "!";
-		var res5 = reader.read(data5);
-		$("#data5").text(data5); 
+			reader.options.datatype="csv";
+			reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
+			reader.options.csvfieldSep = "#";
+			reader.options.csvRecordSep = "!";
+			var res5 = reader.read(data5);
+			$("#data5").text(data5); 
 			$("#transformer5").text(JSON.stringify(reader.options.resultFields));
 			$("#result5").text(JSON.stringify(res5));
+		
+		
+		var  data6 = [{
+			name: "sam",
+			email: "sam@email"
+	        },
+			{name: "tutu", email: "tutu@mail.com"},
+			{name: "sammy", email: "s@sammymail.com"}
+			];
+	var model6 = [ {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+			   {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+				];
+		
+		
+	   ds = $.uix.datasource({reader: new SchemaReader(), model: model6 ,rawdata: data6, paging:{limit: 1} });
+		ds.refresh();
+		
+		$("#data6").text(JSON.stringify(data6, null, 1));
+		$("#model6").text(JSON.stringify(model6,null, 1));
+		
+		function createDynForm($form, datasource, mode){
+			$.each(datasource.options.model, function(i, field){
+				// var field = $.grep(datasource.options.model, function (i){ if(i.name == fld.name) return i; });
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				widgetHelper.render($form, field, mode); 
+				//fill initial data
+				var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+				widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+			
+			});
+			//update form data when datasource updates
+			$(ds).on("dataviewresponse",function(){
+				$.each(datasource.options.model, function(i, field){
+					var fieldWidgets = $("[data-spine-prop='"+field.name+"']", $form);
+					widgetHelper.setValue(fieldWidgets, datasource.get(field.name));
+				});
+			});
+			
+		}
+		
+		$("#mytemplates").load('js/plugins/widgethelper.templates.html', function (){
+			createDynForm($("#dynform"), ds, 'edit');
+		});
+		
+		$("#dynform_pager").pager( {source:ds} );
 		
 		});
 	</script>
@@ -172,6 +217,7 @@ var data3= [{
           <li><a href="#toc3"><i class="icon-chevron-right"></i> Data mapping</a></li>
           <li><a href="#toc4"><i class="icon-chevron-right"></i> CSV and filtering</a></li>
           <li><a href="#toc5"><i class="icon-chevron-right"></i> Custom text file</a></li>
+          <li><a href="#toc6"><i class="icon-chevron-right"></i> Dynamic form</a></li>
         </ul>
       </div>
     <div class="span9 ">
@@ -245,7 +291,13 @@ Even records can be optionally enclosed by some arbritrary character (for csv de
 Transformer:<pre id="transformer5"></pre>
 Result <pre id="result5"></pre>
 
-
+<h3>DataSource</h3>
+<a name="toc6">Local datasource </a>
+Data6<pre id="data6"></pre>
+Model6 <pre id="model6"></pre>
+Dyn Form:
+<div id="dynform"></div>
+<div id="dynform_pager"></div>
 		</div>
 		  
     </div><!--span9 fluid-->
@@ -254,7 +306,7 @@ Result <pre id="result5"></pre>
   
 </div><!--container fluid-->
  
- 
+<div id="mytemplates"></div>
 	
 </body>
 </html>
