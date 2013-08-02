@@ -135,7 +135,7 @@
 				}
 				var datasource = {data: temp} ;
 				if(this.options.datatype == 'text' || this.options.datatype == 'csv'){
-					datasource.data = parseCSV(obj, this.csvfieldSep, this.csvRecordSep, this.csvFieldDelimiter ) ;
+					datasource.data = parseCSV(obj, this.options.csvfieldSep, this.options.csvRecordSep, this.options.csvFieldDelimiter ) ;
 					new ArrayReader(this.options.resultFields).read(datasource);
 				}else{
 					new ArrayReader(this.options.resultFields).read(datasource);

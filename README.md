@@ -10,6 +10,7 @@ Datasource is composed of two parts.
 * Observable data - This is totally unrelated to datasource functionality of datasource, but this works well in 
  conjunction with existing components that use datasource so it can be updated on datasource refresh events.
 
+Demo page: [demo](http://samarjit.github.io/DatasourceForm/index.html)
 ###Additional Components###
 There is a component where dynamic forms can be created only on the basis of model. 
 Other data driven component which can accept datasource are autocomplete, grids, combobox.
