@@ -5,6 +5,19 @@
 	<title>Datasource examples</title>
 	<script src="js/require.js"></script>
 	<script src="js/requireconfig.js"></script>
+
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jquery" src="./test/../js/lib/jquery-1.9.1.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jsonpath" src="./test/../js/plugins/jsonpath-0.8.0.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jqueryui" src="./test/../js/lib/jquery-ui-1.10.1.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jsrender" src="./test/../js/plugins/jsrender.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jsrobservable" src="./test/../js/plugins/jquery.observable.js"></script>
+<!--required for dynamic form -->
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="widgethelper" src="./test/../js/plugins/widget-helper.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="gridpager" src="./test/../js/plugins/grid-pager.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="uidataview" src="./test/../js/plugins/jquery.ui.dataview.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="uidataviewlocal" src="./test/../js/plugins/jquery.ui.dataviewlocal.js"></script>
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="datasource" src="./test/../js/plugins/jquery.uix.datasource.js"></script></head>
+
 	<link rel="stylesheet" href="css/plugins/jquery-ui-1.10.0.css">
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
 	<style>
@@ -110,7 +123,8 @@ var data3= [{
 
 var ds = null;
 	require.config({baseUrl: "./test" });
-		require(['jqueryui','datasource', 'jsrobservable','widgethelper', 'gridpager'], function(){
+		//require(['jqueryui','datasource', 'jsrobservable','widgethelper', 'gridpager'], 
+		$(document).ready(function(){
 
 		reader = new SchemaReader({
 			resultFields: [{name: "name",mapping : "name"} , {name: "email", mapping: "email"}]
@@ -202,6 +216,16 @@ var ds = null;
 		
 		$("#dynform_pager").pager( {source:ds} );
 		
+		$("#exrun").click(function(){
+			var optStr = $("#exoptions").val();
+			var dataStr = $("#exdata").val();
+			var opt = eval('var d = '+optStr+'; d');
+			var res = new SchemaReader( opt);
+			var data = eval('var d = '+dataStr+'; d');
+			
+			$("#exres").text( JSON.stringify(res.read(data)) );
+		});
+		
 		});
 	</script>
 </head>
@@ -211,8 +235,9 @@ var ds = null;
    
 	<div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav affix">
-          <li class="active"><a href="#typography"><i class="icon-chevron-right"></i> Main</a></li>
-          <li><a href="#code"><i class="icon-chevron-right"></i> data source</a></li>
+          <li class="active"><a href="#main"><i class="icon-chevron-right"></i> Main</a></li>
+          <li><a href="#example"><i class="icon-chevron-right"></i>Example</a></li>
+          <li><a href="#toc1"><i class="icon-chevron-right"></i> SchemaReader</a></li>
           <li><a href="#toc2"><i class="icon-chevron-right"></i> Data mapping shortcut</a></li>
           <li><a href="#toc3"><i class="icon-chevron-right"></i> Data mapping</a></li>
           <li><a href="#toc4"><i class="icon-chevron-right"></i> CSV and filtering</a></li>
@@ -222,16 +247,32 @@ var ds = null;
       </div>
     <div class="span9 ">
      <div class="section">
+		<a name="main"></a>
 		<h3>This is a local datasource example.</h3>
 		All in one working example : <a href="test/dynamic_form.html">dynamic form + grid and common pager</a>
-		</div>	
-		<div class="section" id="#toc1">
-			<h3>SchemaReader</h3>
-			This section shows filtering
-			
-			Data
-			<pre>
-var data1= [{
+		</div>
+		
+		
+	 <a name="example"></a>
+		<h3 >Try out</h3>
+Default options
+<pre>
+{
+	rootList: "data",
+	meta: "",
+	datatype: "json",
+	items: [],
+	resultFields: null//[{name: "name",  mapping: "name" /*can be xpath,json path
+					  // or javascript function*/}, {name: "email"}]
+	,
+	csvFieldSep : ",",
+	csvRecordSep: "\r\n",
+	csvFieldDelimiter: '"'
+};
+</pre>		
+		<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
+</textarea>
+		<textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -239,6 +280,27 @@ var data1= [{
  {
  full_name: "tutu",
  email_id: "tutu@email",
+ extra: "extra value2"
+ }]</textarea>
+<button id="exrun">Run</button>
+<pre id="exres"></pre>
+
+			
+		
+		<a name="toc1"></a>
+			<h3>SchemaReader</h3>
+			This section shows filtering
+			
+			Data
+			<pre>
+var data1= [{
+  name: "samarjit",
+  email: "samarjit@email",
+  extra: "extra value"
+ },
+ {
+ name: "tutu",
+ email: "tutu@email",
  extra: "extra value2"
  }
 ];
@@ -295,6 +357,9 @@ Result <pre id="result5"></pre>
 <a name="toc6">Local datasource </a>
 Data6<pre id="data6"></pre>
 Model6 <pre id="model6"></pre>
+
+<div class="section" >
+
 Dyn Form:
 <div id="dynform"></div>
 <div id="dynform_pager"></div>
