@@ -70,7 +70,14 @@ define('df',['app/cssloader','jqueryui', 'jsviews', 'canjs',"uidataview","uidata
 	             {name: "num_child", type: "int", capturetype: "spinner", displaytype: "displayText", label: "Num Child", searchable: true, isPartOfKey: false, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	}
 	            ];
 
-	 
+	model = [
+	             {name: "name", type: "string", capturetype: "text",  label: "Name"	, isPartOfKey: true},
+	             {name: "email", type: "string", capturetype: "email",  label: "Email"},
+	             {name: "dob", type: "string", capturetype: "datepicker",  label: "Date Of Birth"	},
+	             {name: "ismarried", type: "string", capturetype: "checkbox", label: "Married"},
+	             {name: "num_cars", type: "int", capturetype: "slider",  label: "Num Cars"},
+	             {name: "num_child", type: "int", capturetype: "spinner",  label: "Num Child"}
+	            ];
 
 	var datasource = $.uix.datasource({model: model, rawdata: data, paging:{limit: 1} });
 	var panel_fields = ["name","email","dob","ismarried"];
