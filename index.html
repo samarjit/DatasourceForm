@@ -171,6 +171,27 @@ var ds = null;
 			$("#transformer5").text(JSON.stringify(reader.options.resultFields));
 			$("#result5").text(JSON.stringify(res5));
 		
+		var data7 = {
+			meta1: 'This is meta1',
+			myarr: [{
+			  full_name: "samarjit",
+			  email: "samarjit@email",
+			  extra: "extra value"
+			 },
+			 {
+			 full_name: "tutu",
+			 email: "tutu@email",
+			 extra: "extra value2"
+			 }]
+		};
+		
+		reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
+		reader.options.rootList = "myarr";
+		reader.options.datatype="json";
+		reader.read(data7);
+		$("#data7").text(JSON.stringify (data7, null ,3 )); 
+		$("#transformer7").text(JSON.stringify(reader.options.resultFields));
+		$("#result7").text(JSON.stringify(res5));
 		
 		var  data6 = [{
 			name: "sam",
@@ -246,6 +267,7 @@ var ds = null;
           <li><a href="#toc1"><i class="icon-chevron-right"></i> SchemaReader</a></li>
           <li><a href="#toc2"><i class="icon-chevron-right"></i> Data mapping shortcut</a></li>
           <li><a href="#toc3"><i class="icon-chevron-right"></i> Data mapping</a></li>
+          <li><a href="#toc7"><i class="icon-chevron-right"></i> Non array input</a></li>
           <li><a href="#toc4"><i class="icon-chevron-right"></i> CSV and filtering</a></li>
           <li><a href="#toc5"><i class="icon-chevron-right"></i> Custom text file</a></li>
           <li><a href="#toc6"><i class="icon-chevron-right"></i> Dynamic form</a></li>
@@ -349,6 +371,22 @@ var data3= [{
 Transformer3:<pre id="transformer3">			</pre>
 Result3:		<pre id="result3"></pre>
 
+<a name="toc7" >For data which is not an array returned from server </a> <br/>
+The rootList option is used to extract this array. Internally it uses jsonPath to extact the data
+
+Data:
+<pre id="data7">
+</pre>		
+Transformer:<pre id="transformer7"></pre>
+The associated javascript will be
+<pre>
+reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
+reader.options.rootList = "myarr";
+reader.options.datatype="json";
+reader.read(data7);
+</pre>
+Result <pre id="result7"></pre>
+
 
 <a name="toc4">CSV Reading with filtering </a> <br/>
 Data:
@@ -369,6 +407,8 @@ Even records can be optionally enclosed by some arbritrary character (for csv de
 
 Transformer:<pre id="transformer5"></pre>
 Result <pre id="result5"></pre>
+
+
 
 <h3>DataSource</h3>
 <a name="toc6">Local datasource </a>
