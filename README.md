@@ -55,12 +55,13 @@ datatype - can be json,csv
 resultFields - Data transformation is done based on this parameter for JSON. There is data property mapping as well as
 data property filtering. 
 
-###The following are two types for JSON reader.###
+###The following are three types for JSON reader.###
 
 * Type 1. `[{name: "name",  mapping: "full_name" }, {name: "email", mapping: "email_id"}]`
 
 ```javascript
-reader = new SchemaReader({resultFields: [{name: "name",  mapping: "full_name" }, {name: "email", mapping: "email_id"}]});
+reader = new SchemaReader({resultFields: [{name: "name",  mapping: "full_name" },
+                                         {name: "email", mapping: "email_id"}]});
 reader.read([data]); // -> transformed result
 ```
 
@@ -149,7 +150,8 @@ var data7 = {
 reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
 reader.options.rootList = "myarr";
 reader.options.datatype="json";
-reader.read(data7); ==> [{"name":"samarjit","email":"samarjit@email"},{"name":"tutu","email":"tutu@email"}]
+reader.read(data7); ==> [{"name":"samarjit","email":"samarjit@email"},
+{"name":"tutu","email":"tutu@email"}]
 ```	
 		
 
