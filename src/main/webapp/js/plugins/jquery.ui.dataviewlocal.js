@@ -21,8 +21,9 @@ $.widget( "ui.dataviewlocal", $.ui.dataview, {
 			response( that._page( sortedItems ), sortedItems.length );
 		};
 		if ( $.observable ) { 
+//			$.observable.observe([ds.options.input], "*", function (){ console.log( "sdfsdf112" ); });
 			$([ this.options.input ]).bind( "insert remove arrayChange", function(event, ui) {
-//			$.observable( this.options.input ).bind( "insert remove", function(event, ui) {
+//				$.observable( this.options.input ).bind( "insert remove", function(event, ui) {
 				that.refresh();
 			});
 		}
