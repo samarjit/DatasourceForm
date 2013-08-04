@@ -179,16 +179,21 @@ var ds = null;
 			{name: "tutu", email: "tutu@mail.com"},
 			{name: "sammy", email: "s@sammymail.com"}
 			];
-	var model6 = [ {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
+		var model6 = [ {name: "name", type: "string", capturetype: "text", displaytype: "displayText", label: "Name", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 			   {name: "email", type: "string", capturetype: "email", displaytype: "displayText", label: "Email", searchable: true, isPartOfKey: true, convertToModel: null /*view to model*/, convertToView: null /*model to view*/ 	},
 				];
 		
 		
-	   ds = $.uix.datasource({reader: new SchemaReader(), model: model6 ,rawdata: data6, paging:{limit: 1} });
+		ds = $.uix.datasource({reader: new SchemaReader(), model: model6 ,rawdata: data6, paging:{limit: 1} });
+		
+		$(ds).on("dataviewresponse",function(){
+			$("#dynresult").text(" ds.result = "+ JSON.stringify( ds.result) );
+		});
+		
 		ds.refresh();
 		
-		$("#data6").text(JSON.stringify(data6, null, 1));
-		$("#model6").text(JSON.stringify(model6,null, 1));
+		$("#data6").text("var data6 = "+ JSON.stringify(data6, null, 1));
+		$("#model6").text("var model6 = "+JSON.stringify(model6,null, 1));
 		
 		function createDynForm($form, datasource, mode){
 			$.each(datasource.options.model, function(i, field){
@@ -222,7 +227,8 @@ var ds = null;
 			var opt = eval('var d = '+optStr+'; d');
 			var res = new SchemaReader( opt);
 			var data = eval('var d = '+dataStr+'; d');
-			
+			$("#exopt").text(JSON.stringify( opt, null, 2) );
+			$("#exdatafmt").text(JSON.stringify(data, null, 1));
 			$("#exres").text( JSON.stringify(res.read(data)) );
 		});
 		
@@ -251,7 +257,9 @@ var ds = null;
 		<h3>This is a local datasource example.</h3>
 		All in one working example : <a href="test/dynamic_form.html">dynamic form + grid and common pager</a>
 		</div>
-		
+		<h4>
+			<a href="https://github.com/samarjit/DatasourceForm/">Original Github repo</a>
+		</h4>
 		
 	 <a name="example"></a>
 		<h3 >Try out</h3>
@@ -270,9 +278,9 @@ Default options
 	csvFieldDelimiter: '"'
 };
 </pre>		
-		<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
+Options:<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
 </textarea>
-		<textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
+Data: <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -283,6 +291,15 @@ Default options
  extra: "extra value2"
  }]</textarea>
 <button id="exrun">Run</button>
+
+Code: <pre>
+reader = new SchemaReader(<span id="exopt">[options]</span>);
+		
+var res1 = reader.read(<span id="exdatafmt">[data]</span>);
+$("#transformer1").text(JSON.stringify(reader.options.resultFields));
+$("#result1").text(JSON.stringify(res1));
+</pre>	
+
 <pre id="exres"></pre>
 
 			
@@ -305,7 +322,7 @@ var data1= [{
  }
 ];
 			</pre>
-			
+	
 Transformer1:<pre id="transformer1">			</pre>
 Result1:		<pre id="result1"></pre>
 
@@ -359,8 +376,16 @@ Data6<pre id="data6"></pre>
 Model6 <pre id="model6"></pre>
 
 <div class="section" >
-
+Code for DS:
+<pre id="dscode">
+ds = $.uix.datasource({reader: new SchemaReader(), model: model6 ,rawdata: data6, paging:{limit: 1} });
+$(ds).on("dataviewresponse",function(){
+	$("#dynresult").text( JSON.stringify( ds.result) );
+});
+ds.refresh(); //triggers dataviewresponse
+</pre>
 Dyn Form:
+Current Obj <code id="dynresult"></code>
 <div id="dynform"></div>
 <div id="dynform_pager"></div>
 		</div>
