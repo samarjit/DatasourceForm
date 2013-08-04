@@ -38,6 +38,18 @@ The optiosn accepted are :
 				csvFieldDelimiter: '"'
 			};
 ```
+The [options] needs to be filled with details specified above
+[data] - can be array or object with one of the property can be array. This property can be specified as rootList
+
+```javascript
+reader = new SchemaReader([options]);	
+var res1 = reader.read([data]); //result array/object
+
+//Once schemareader object is created its options can be overridden by
+reader.options.resultFields = ['name','email'];
+var res2 = reader.read(data1);
+```
+
 
 datatype - can be json,csv
 resultFields - Data transformation is done based on this parameter for JSON. There is data property mapping as well as
@@ -47,9 +59,13 @@ data property filtering.
 
 * Type 1. `[{name: "name",  mapping: "full_name" }, {name: "email", mapping: "email_id"}]`
 
+```javascript
+reader = new SchemaReader({resultFields: [{name: "name",  mapping: "full_name" }, {name: "email", mapping: "email_id"}]});
+reader.read([data]); // -> transformed result
+```
 
 ```javascript
-If the data input is 
+If the [data] input is 
 [{
   full_name: "samarjit",
   email_id: "samarjit@email",
@@ -78,6 +94,11 @@ After data is read by SchemaReader it will be transformed to
 * Type 2. `["name","email"]`. This will be internally treated as `[{name: "name",  mapping: "name" }, {name: "email", mapping: "email"}]`
 
 ```javascript
+reader.options.resultFields = ['name','email']; 
+var res2 = reader.read([data]);
+```
+
+```javascript
 If the data input is 
 [{
   name: "samarjit",
@@ -104,6 +125,34 @@ After data is read by SchemaReader it will be transformed to
 ]
 ```
 
+* Type 3 input data which is not an array *
+Data presented in the form of object and if any property of that object is an array that array can also be extracted.
+Addition to this metadata can be also extracted
+
+The rootList option is used to extract this array. Internally it uses jsonPath to extact the data
+
+```javascript
+var data7 = {
+			meta1: 'This is meta1',
+			myarr: [{
+			  full_name: "samarjit",
+			  email: "samarjit@email",
+			  extra: "extra value"
+			 },
+			 {
+			 full_name: "tutu",
+			 email: "tutu@email",
+			 extra: "extra value2"
+			 }]
+		};
+		
+reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
+reader.options.rootList = "myarr";
+reader.options.datatype="json";
+reader.read(data7); ==> [{"name":"samarjit","email":"samarjit@email"},{"name":"tutu","email":"tutu@email"}]
+```	
+		
+
 ###CSV reader###
 The csv data can be specified as a combination of fields seperators and record separators.
 
@@ -124,6 +173,13 @@ Suppose input data is
 
 And resultFields is `[{ name: "id", mapping: 0} , {name: "name", mapping: 1}, {name: "email", mapping: 2}]`
 
+```javascript
+var reader1 = new SchemaReader();
+reader1.options.datatype="csv";
+reader1.options.resultFields = [{ name: "id", mapping: 0} , {name: "name", mapping: 1}, {name: "email", mapping: 2}];
+
+var res4 = reader1.read(data4);
+```
 Then the result data would be like.
 
 ```javascript
@@ -140,6 +196,23 @@ Then the result data would be like.
   }
 ]
 ```
+
+Alternate CSV syntax for any general text file syntax
+For data
+```javascript
+var data5 = "sam#sgp#2011!tutu#ind#2012";
+
+reader.options.datatype="csv";
+reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
+reader.options.csvfieldSep = "#";
+reader.options.csvRecordSep = "!";
+var res5 = reader.read(data5);
+
+res5 =>
+[{"name":"sam","year":"2011"},{"name":"tutu","year":"2012"}]
+
+```
+
 
 TODO:
 Although I have not yet written a wrapper for XML a similar wrapper can be written for XML also, where mappign will 
