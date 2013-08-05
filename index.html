@@ -276,7 +276,7 @@ var ds = null;
           <li><a href="#toc6"><i class="icon-chevron-right"></i> Dynamic form</a></li>
         </ul>
       </div>
-    <div class="span9 ">
+    <div class="span8 ">
      <div class="section">
 		<a name="main"></a>
 		<h3>This is a local datasource example.</h3>
@@ -303,9 +303,10 @@ Default options
 	csvFieldDelimiter: '"'
 };
 </pre>		
-Options (Paste transform options from below examples):<br/><textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
+Options (Paste transform options from below examples):<br/>
+<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span12">{resultFields: ['full_name','email_id']}
 </textarea>
-Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
+Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" rows="10" class="span12">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -354,7 +355,7 @@ Result1:		<pre id="result1"></pre>
 
 <a name="toc2">Data Mapping shortcut</a><br/>
 Transform 2 <br/> reader.options.resultFields:<pre id="transformer2">			</pre>
-Result2:		<pre id="result2"></pre>
+<h4>Result2</h4>:		<pre id="result2"></pre>
 
 
 <a name="toc3">Data Mapping </a>
@@ -373,7 +374,7 @@ var data3= [{
 </pre>
 
 Transform 3 Options <br/> reader.options.resultFields:<pre id="transformer3">			</pre>
-Result3:		<pre id="result3"></pre>
+<h4>Result3</h4>:		<pre id="result3"></pre>
 
 <a name="toc7" >For data which is not an array returned from server </a> <br/>
 The rootList option is used to extract this array. Internally it uses jsonPath to extact the data
@@ -389,7 +390,7 @@ reader.options.rootList = "myarr";
 reader.options.datatype="json";
 reader.read(data7);
 </pre>
-Result <pre id="result7"></pre>
+<h4>Result</h4> <pre id="result7"></pre>
 
 
 <a name="toc4">CSV Reading with filtering </a> <br/>
@@ -402,7 +403,7 @@ Record delimiter (,) and Record seperator (CR LF or LF or CR).
 Transform options <br/> resultFields :<pre id="transformer4"></pre>
 Configuring CSV datatype: <pre >reader.options.datatype="csv";</pre>
 
-Result <pre id="result4"></pre>
+<h4>Result</h4> <pre id="result4"></pre>
 
 <a name="toc5">Custom Text or CSV Reading specified field separator (#) and record sep (!) </a> <br/>
 Data:
@@ -419,7 +420,7 @@ reader.options.csvfieldSep = "#";
 reader.options.csvRecordSep = "!";
 </pre>
 
-Result <pre id="result5"></pre>
+</h4>Result</h4> <pre id="result5"></pre>
 
 
 
