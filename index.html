@@ -250,7 +250,7 @@ var ds = null;
 			var data = dataStr;
 			try{
 			    data = eval('var d = '+dataStr+'; d');	
-			} catch(){}
+			} catch(e){}
 			$("#exopt").text(JSON.stringify( opt, null, 2) );
 			$("#exdatafmt").text(JSON.stringify(data, null, 1));
 			$("#exres").text( JSON.stringify(res.read(data)) );
@@ -303,9 +303,9 @@ Default options
 	csvFieldDelimiter: '"'
 };
 </pre>		
-Options:<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
+Options (Paste transform options from below examples):<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
 </textarea>
-Data: <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
+Data (Paste CSV or JSON): <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -315,7 +315,8 @@ Data: <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
  email_id: "tutu@email",
  extra: "extra value2"
  }]</textarea>
-<button id="exrun">Run</button>
+<br/>
+<button id="exrun" class="btn btn-default">Run</button>
 <br/>
 Code: <pre>
 reader = new SchemaReader(<span id="exopt">[options]</span>);
