@@ -168,7 +168,7 @@ var ds = null;
 			reader.options.csvRecordSep = "!";
 			var res5 = reader.read(data5);
 			$("#data5").text(data5); 
-			$("#transformer5").text(JSON.stringify(reader.options.resultFields));
+			//$("#transformer5").text(JSON.stringify(reader.options.resultFields));
 			$("#result5").text(JSON.stringify(res5));
 		
 		var data7 = {
@@ -191,7 +191,7 @@ var ds = null;
 		reader.read(data7);
 		$("#data7").text(JSON.stringify (data7, null ,3 )); 
 		$("#transformer7").text(JSON.stringify(reader.options.resultFields));
-		$("#result7").text(JSON.stringify(res5));
+		$("#result7").text(JSON.stringify(res7));
 		
 		var  data6 = [{
 			name: "sam",
@@ -247,7 +247,10 @@ var ds = null;
 			var dataStr = $("#exdata").val();
 			var opt = eval('var d = '+optStr+'; d');
 			var res = new SchemaReader( opt);
-			var data = eval('var d = '+dataStr+'; d');
+			var data = dataStr;
+			try{
+			    data = eval('var d = '+dataStr+'; d');	
+			} catch(){}
 			$("#exopt").text(JSON.stringify( opt, null, 2) );
 			$("#exdatafmt").text(JSON.stringify(data, null, 1));
 			$("#exres").text( JSON.stringify(res.read(data)) );
@@ -313,7 +316,7 @@ Data: <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
  extra: "extra value2"
  }]</textarea>
 <button id="exrun">Run</button>
-
+<br/>
 Code: <pre>
 reader = new SchemaReader(<span id="exopt">[options]</span>);
 		
@@ -321,7 +324,7 @@ var res1 = reader.read(<span id="exdatafmt">[data]</span>);
 $("#transformer1").text(JSON.stringify(reader.options.resultFields));
 $("#result1").text(JSON.stringify(res1));
 </pre>	
-
+<h4>Result</h4>
 <pre id="exres"></pre>
 
 			
@@ -345,11 +348,11 @@ var data1= [{
 ];
 			</pre>
 	
-Transformer1:<pre id="transformer1">			</pre>
+Transform 1 <br/> reader.options.resultFields:<pre id="transformer1">			</pre>
 Result1:		<pre id="result1"></pre>
 
 <a name="toc2">Data Mapping shortcut</a><br/>
-Transformer2:<pre id="transformer2">			</pre>
+Transform 2 <br/> reader.options.resultFields:<pre id="transformer2">			</pre>
 Result2:		<pre id="result2"></pre>
 
 
@@ -368,7 +371,7 @@ var data3= [{
 ];
 </pre>
 
-Transformer3:<pre id="transformer3">			</pre>
+Transform 3 Options <br/> reader.options.resultFields:<pre id="transformer3">			</pre>
 Result3:		<pre id="result3"></pre>
 
 <a name="toc7" >For data which is not an array returned from server </a> <br/>
@@ -377,7 +380,7 @@ The rootList option is used to extract this array. Internally it uses jsonPath t
 Data:
 <pre id="data7">
 </pre>		
-Transformer:<pre id="transformer7"></pre>
+Transform Options <br/> reader.options.resultFields:<pre id="transformer7"></pre>
 The associated javascript will be
 <pre>
 reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
@@ -395,17 +398,26 @@ Record delimiter (,) and Record seperator (CR LF or LF or CR).
 <pre id="data4">
 </pre>		
 
-Transformer:<pre id="transformer4"></pre>
+Transform options <br/> resultFields :<pre id="transformer4"></pre>
+Configuring CSV datatype: <pre >reader.options.datatype="csv";</pre>
+
 Result <pre id="result4"></pre>
 
-<a name="toc5">Custom Text or CSV Reading specified record sep (#) and delim (!)</a> <br/>
+<a name="toc5">Custom Text or CSV Reading specified field separator (#) and record sep (!) </a> <br/>
 Data:
 CSV reader with arbritrary record delimiter and arbritary record seperator.
 Even records can be optionally enclosed by some arbritrary character (for csv default is &quot;)
 <pre id="data5">
 </pre>		
 
-Transformer:<pre id="transformer5"></pre>
+Transform options : 
+<pre >
+reader.options.datatype="csv";
+reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
+reader.options.csvfieldSep = "#";
+reader.options.csvRecordSep = "!";
+</pre>
+
 Result <pre id="result5"></pre>
 
 
