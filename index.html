@@ -164,7 +164,7 @@ var ds = null;
 		
 			reader.options.datatype="csv";
 			reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
-			reader.options.csvfieldSep = "#";
+			reader.options.csvFieldSep = "#";
 			reader.options.csvRecordSep = "!";
 			var res5 = reader.read(data5);
 			$("#data5").text(data5); 
@@ -243,6 +243,7 @@ var ds = null;
 		$("#dynform_pager").pager( {source:ds} );
 		
 		$("#exrun").click(function(){
+			$("#exres").empty();
 			var optStr = $("#exoptions").val();
 			var dataStr = $("#exdata").val();
 			var opt = eval('var d = '+optStr+'; d');
@@ -266,7 +267,7 @@ var ds = null;
 	<div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav affix">
           <li class="active"><a href="#main"><i class="icon-chevron-right"></i> Main</a></li>
-          <li><a href="#example"><i class="icon-chevron-right"></i>Example</a></li>
+          <li><a href="#example"><i class="icon-chevron-right"></i>Try out</a></li>
           <li><a href="#toc1"><i class="icon-chevron-right"></i> SchemaReader</a></li>
           <li><a href="#toc2"><i class="icon-chevron-right"></i> Data mapping shortcut</a></li>
           <li><a href="#toc3"><i class="icon-chevron-right"></i> Data mapping</a></li>
@@ -304,9 +305,48 @@ Default options
 };
 </pre>		
 Options (Paste transform options from below examples):<br/>
-<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span12">{resultFields: ['full_name','email_id']}
-</textarea>
-Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" rows="10" class="span12">[{
+
+<div class="row-fluid ">
+	<div class="span6">
+		<textarea name="exoptions" id="exoptions" cols="70" rows="12" class="span12">{resultFields: ['full_name','email_id']}
+		</textarea>
+	</div>
+	<div class="span3">
+	<pre>
+For JSON
+
+{
+resultFields: [
+{name:'name', mapping:'full_name'}, 
+{name:'email', mapping:'email_id'}
+],
+datatype: "json"
+}
+
+
+</pre>
+	 
+	</div>
+	<div class="span3"> 
+	<pre>
+For CSV 
+{
+resultFields: [
+{name:'name', mapping:0}, 
+{name:'year', mapping:2}
+],
+csvFieldSep : "#",
+csvRecordSep: "!",
+csvFieldDelimiter: '"',
+datatype:"csv"
+}</pre>
+	</div>
+</div>
+
+
+
+<br/>
+Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" rows="8" class="span12">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -318,16 +358,17 @@ Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" row
  }]</textarea>
 <br/>
 <button id="exrun" class="btn btn-primary btn-large">Run</button>
-<br/>
-Code: <pre>
+
+<h4>Result</h4>
+<pre id="exres"></pre>
+Generated Code for the above: <pre>
 reader = new SchemaReader(<span id="exopt">[options]</span>);
 		
 var res1 = reader.read(<span id="exdatafmt">[data]</span>);
 $("#transformer1").text(JSON.stringify(reader.options.resultFields));
 $("#result1").text(JSON.stringify(res1));
 </pre>	
-<h4>Result</h4>
-<pre id="exres"></pre>
+
 
 			
 		
@@ -351,7 +392,7 @@ var data1= [{
 			</pre>
 	
 Transform 1 <br/> reader.options.resultFields:<pre id="transformer1">			</pre>
-Result1:		<pre id="result1"></pre>
+<h4>Result1</h4>		<pre id="result1"></pre>
 
 <a name="toc2">Data Mapping shortcut</a><br/>
 Transform 2 <br/> reader.options.resultFields:<pre id="transformer2">			</pre>
@@ -374,7 +415,7 @@ var data3= [{
 </pre>
 
 Transform 3 Options <br/> reader.options.resultFields:<pre id="transformer3">			</pre>
-<h4>Result3</h4>:		<pre id="result3"></pre>
+<h4>Result3</h4>		<pre id="result3"></pre>
 
 <a name="toc7" >For data which is not an array returned from server </a> <br/>
 The rootList option is used to extract this array. Internally it uses jsonPath to extact the data
@@ -416,11 +457,11 @@ Transform options :
 <pre >
 reader.options.datatype="csv";
 reader.options.resultFields = [{name:"name",mapping: 0}, {name: "year",mapping:2}];
-reader.options.csvfieldSep = "#";
+reader.options.csvFieldSep = "#";
 reader.options.csvRecordSep = "!";
 </pre>
 
-</h4>Result</h4> <pre id="result5"></pre>
+<h4>Result</h4> <pre id="result5"></pre>
 
 
 
