@@ -188,7 +188,7 @@ var ds = null;
 		reader.options.resultFields = [{ name: 'name', mapping: 'full_name'}, {name:'email'}];
 		reader.options.rootList = "myarr";
 		reader.options.datatype="json";
-		reader.read(data7);
+		var res7 = reader.read(data7);
 		$("#data7").text(JSON.stringify (data7, null ,3 )); 
 		$("#transformer7").text(JSON.stringify(reader.options.resultFields));
 		$("#result7").text(JSON.stringify(res7));
@@ -303,9 +303,9 @@ Default options
 	csvFieldDelimiter: '"'
 };
 </pre>		
-Options (Paste transform options from below examples):<textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
+Options (Paste transform options from below examples):<br/><textarea name="exoptions" id="exoptions" cols="70" rows="10" class="span4">{resultFields: ['full_name','email_id']}
 </textarea>
-Data (Paste CSV or JSON): <textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
+Data (Paste CSV or JSON): <br/><textarea name="exdata" id="exdata" cols="70" rows="10" class="span5">[{
   full_name: "samarjit",
   email_id: "samarjit@email",
   extra: "extra value"
@@ -316,7 +316,7 @@ Data (Paste CSV or JSON): <textarea name="exdata" id="exdata" cols="70" rows="10
  extra: "extra value2"
  }]</textarea>
 <br/>
-<button id="exrun" class="btn btn-default">Run</button>
+<button id="exrun" class="btn btn-primary btn-large">Run</button>
 <br/>
 Code: <pre>
 reader = new SchemaReader(<span id="exopt">[options]</span>);
