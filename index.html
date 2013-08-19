@@ -257,6 +257,106 @@ var ds = null;
 			$("#exres").text( JSON.stringify(res.read(data)) );
 		});
 		
+		
+		
+		
+		///demo widgetHelper assumes widgethelper.templates.html has been loaded
+			$("#mytemplates").load('js/plugins/widgethelper.templates.html', function (){		
+				//slider
+				var field = {name: "myslider", label: "My Slider Label", capturetype: "slider"};
+				widgetHelper.render($("#slidercontainer"),field, "edit");
+				
+				$("#btnSliderSetVal1").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myslider]"), $("#slidersetVal").val() );
+				});
+				$("#btnSliderSetVal2").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myslider]"), 50);
+				});
+				$("#btnSliderSetVal3").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myslider]"), "12" );
+				});
+				$("#btnSliderGetVal").click(function(){
+					$("#slidergetVal").val( widgetHelper.getValue($("[data-spine-prop=myslider]"))  );
+				});
+				
+				//radio
+				
+				field = {name: "myradiogroup", label: "My radio Label", capturetype: "radiogroup", widgetData:"{\"floatLeftProp\": \"Y\",\"radioList\":\"[{val: 'Y', label: 'Yes'},{val: 'M', label:'Male' }]\"}"};
+				widgetHelper.render($("#radiocontainer"),field, "edit");
+				
+				$("#btnRdSetVal1").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myradiogroup]"), $("#rdsetVal").val() );
+				});
+				$("#btnRdSetVal2").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myradiogroup]"), "Y");
+				});
+				$("#btnRdSetVal3").click(function(){
+					widgetHelper.setValue($("[data-spine-prop=myradiogroup]"), "M" );
+				});
+				$("#btnRdGetVal").click(function(){
+					$("#rdgetVal").val( widgetHelper.getValue($("[data-spine-prop=myradiogroup]"))  );
+				});
+				
+				$.getScript("../js/plugins/jquery.transfer.js", function(){ console.log('loaded'); 
+					field = {name: "mytransfer", label: "My Transfer Label", capturetype: "transferWidget", widgetData:"{\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"datasource\":\"local\",\"localdata\":\"AF,AFGHANISTAN,selected\\nAX,LAND ISLANDS,selected\\nAL,ALBANIA\\nDZ,ALGERIA\"}" };
+					widgetHelper.render($("#transfercontainer"),field, "edit");
+
+					
+					$("#btnTrSetVal1").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mytransfer]"), $("#trsetVal").val() );
+					});
+					$("#btnTrSetVal2").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mytransfer]"), "DZ,AL");
+					});
+					$("#btnTrSetVal3").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mytransfer]"), "DZ" );
+					});
+					$("#btnTrGetVal").click(function(){
+						$("#trgetVal").val( widgetHelper.getValue($("[data-spine-prop=mytransfer]"))  );
+					});
+					
+					
+					
+					
+					field = {name: "mymultisel", label: "My Multisel Label", capturetype: "multiSelect", widgetData:"{\"datasource\":\"remote\",\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"localdata\":\"AF,AFGHANISTAN\\nSG,SINGAPORE\\nIN,INDIA,selected\\nAL,ALBANIA,selected\\nDZ,ALGERIA\",\"remoteurl\":\"test/country.txt\"}" };
+					widgetHelper.render($("#multiselcontainer"),field, "edit");
+					document.getElementsByName("mymultisel")[0].value = 'AF';
+					
+					
+				
+					
+					$("#btnMsSetVal1").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"), $("#mssetVal").val() );
+					});
+					$("#btnMsSetVal2").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"), "IN");
+					});
+					$("#btnMsSetVal3").click(function(){
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"), "AF,AL" );
+					});
+					$("#btnMsGetVal").click(function(){
+						$("#msgetVal").val( widgetHelper.getValue($("[data-spine-prop=mymultisel]"))  );
+					});
+					
+					
+					//combined set/get
+					$("#btnSetFormData").click(function(){
+						var frmCombiDataSet = eval('"use strict"; var d='+$("#frmCombiDataSet").val()+';d');
+						$.each(frmCombiDataSet, function(i,v){
+							 widgetHelper.setValue($("[data-spine-prop="+i+"]"), v);
+						});
+					});
+					$("#btnGetFormData").click(function(){
+						var j = {};
+						$("[data-spine-prop]", $("#frmContainer")).filter("[data-spine-type]").each(function(i,v){
+							j[$(v).data("spine-prop")] = widgetHelper.getValue($(v))
+						});
+						$("#frmCombiDataGet").html(JSON.stringify(j,null,3));
+					});
+				});
+				//{"datasource":"remote","unHidePanelData":"","onChangeFnName":"","onFocusFnName":"","localdata":"AF,AFGHANISTAN\nSG,SINGAPORE\nIN,INDIA,selected\nAL,ALBANIA,selected\nDZ,ALGERIA","remoteurl":"country.json"}
+			});	
+				
 		});
 	</script>
 </head>
@@ -275,6 +375,7 @@ var ds = null;
           <li><a href="#toc4"><i class="icon-chevron-right"></i> CSV and filtering</a></li>
           <li><a href="#toc5"><i class="icon-chevron-right"></i> Custom text file</a></li>
           <li><a href="#toc6"><i class="icon-chevron-right"></i> Dynamic form</a></li>
+          <li><a href="#toc8"><i class="icon-chevron-right"></i> Form Controls Widget</a></li>
         </ul>
       </div>
     <div class="span8 ">
@@ -483,6 +584,330 @@ Dyn Form:
 Current Obj <code id="dynresult"></code>
 <div id="dynform"></div>
 <div id="dynform_pager"></div>
+		</div>
+		
+		<div id="widgetcontrol">
+			<a name="toc8"></a>
+			<h3>Form Control Widgets</h3>
+			
+			Form controls are a wrapper on top of HTML controls/set of HTML controls/jQuery widgets or any other smart control from any library. 
+			This enables all widget controls to have setter and getter in a similar way. Although jquery widgets aim for a similar goal of having unified way to set and get options but it is difficult to 
+		    do certain things like loop through all the html elements and get all the values required to be submitted to server. 
+		    
+		     
+		    
+		    <h4>Advantages</h4> 
+			<div class="row-fluid">
+			 	 <ul class="span11" style="margin-left:50px" >
+			 		<li>widgetHelper provides the common code for render. Each specific widget is called from widgetHelper</li>
+			 		<li>Does not submit hidden field's values that are used to maintain the internal states of widgets</li>
+			 		<li>Makes it easy to deal with checkboxes</li>
+			 		<li>Makes radio groups as single entity to which value can be set, value can be read back, and any user action on any of the radio button element will be 
+			 		     handled within that scope of that element</li>
+			 		<li>Display label and control in one box container. From a programmatic perspective its easier to find and highlight label in case of errors or to mark mandtory</li>
+			 		<li>Display error messages in proper place even if using jQuery validation plugin which usually appends and it appends in the wrong place usually if its a datepicker.</li>
+			 		<li>Provides a provision to display tooltip for any form control</li>
+			 		<li>Almost any widget can be wrapped up into a Form control even jQuery transfer widget which a text field and two selectboxes and a few buttons will be 
+			 		    present but only one value gets submitted to server just like any other widget</li>
+			 		<li>serializing and deserializing of values can be done within each form control</li>
+			 		<li>Wraps up multi-selects to produce a comma separated value of selected fields</li>
+			 		<li>Setting json data received from server to any form and getting json data from a form is clean so its easier to loop though all the controls and do some validation and then submit that data to server</li>
+			 		<li>Preselected items values in a selectbox/combobox even if the rest of the list is loaded via ajax. Initially the actual value is set int he textbox and later 
+			 		when the option values are loaded through ajax, then delayed preselection is run to give proper visual apearance of pre-selected items. This also works seemlessly accross selectbox/multiselect/transfer widgets.</li>
+			 	</ul>
+			</div>
+			Lets see the internal structure of the from controls. This will also explain how and why are some things done the way it is done.
+			
+			This is like a factory method to create all jquery Sliders. But this slider accompanies another text field to show the current value.
+			
+			<pre>var spineSlider =  {
+ 		fromElm: null,
+ 		name: "slider",
+ 		render: function ($form, field,  mode  ){
+ 			var html =  $.templates("#tmpl_slider_"+mode).render(field); // can.view("#tmpl_datepicker_"+mode, field);
+			$form.append(html);	
+			var fieldWidgets = $("[data-spine-prop='disp_"+field.name+"']", $form);
+			var opts = (field.widgetData!=null)?$.parseJSON(field.widgetData)||{}:{};
+			
+			fieldWidgets.slider(opts);
+			var fieldWidgetsElm = $("[data-spine-prop='"+field.name+"']", $form);
+			var that = this;
+			fieldWidgets.on("slidechange",function(e,v){
+				fieldWidgetsElm.val( $(this).slider("value"));
+			});
+			
+			fieldWidgetsElm.on("change", function(e,v){
+				$(this).parent().find("[data-spine-prop='disp_"+$(this).data("spine-prop")+"']").data('ui-slider').value(this.value);
+			});
+			
+			fieldWidgets.trigger("slidechange");
+ 		},
+ 		getValue: function($el){
+ 			return $el.val();//$el.data('ui-slider').value();;
+ 		},
+ 		setValue: function($el, val){
+ 			if($.type(val) != "number"){
+ 				try{
+ 					val = parseInt(val);
+ 				}catch(e){
+ 					val = -1;
+ 				}
+ 			}
+ 				
+ 			$el.val(val);
+ 			$el.trigger("change");
+ 		},
+ 		showError: function($el){
+ 			
+ 		},
+ 		showTooltip: function($el){
+ 			
+ 		}
+ 	};
+			</pre> 
+			Template
+			<pre>
+&lt;script type="text/template" id="tmpl_datepicker_edit">
+&lt;div class="fieldbox">	
+   &lt;label for="{{:name}}" class="field-label">{{:label}}
+
+	{{if mandatoryDecorate == 'Y'}}
+	&lt;span style='color:red' >&lt;strong>*&lt;/strong>&lt;/span>
+	{{/if}}
+	&lt;/label>
+   &lt;div type="text" name="disp_{{:name}}" data-spine-prop="disp_{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" >&lt;/div>
+   
+   &lt;input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" size="2" maxlength="10" />
+
+   &lt;div class="error-container">&lt;/div>
+&lt;/div>
+&lt;/script>
+
+&lt;/script>
+			</pre>
+			
+			
+			<h5 class="lead">
+				This is a simple widget wrapper of a normal jquery Slider. 
+				<small>A few interesting things can be seen here.</small>
+			</h5>
+				 <br/>
+			
+			<dl class="span10 dl-horizontal">
+				<dt>* Slider + its label</dt> 
+				<dd>Slider + its label forms the control. So div.fieldbox can be put anywhere and it will display correctly along with its label. This helps a lot in creating dynamic forms.
+					Web frameworks like struts also advocates it <code>&lt;sj:datepicker label="Birth Date" name="dob" /></code>.</dd>
+				
+				 
+					<dt>* Error container </dt><dd>
+						is predefined so error will always display in the right place. 
+						 If jquery validation plugin and jquery transfer plugin is used, which has two select boxes and an optional search box. 
+						 The error label appended by jquery validation can appear in some very odd places.
+						 If jquery validation is used with jquery datepicker plugin normally the error label crops up in between the textfield and the calendar icon making GUI look horrible, this situation can be avoided here. 
+						 
+						 Another possibility this "error-container" offers is to wrap the error into a javascript tooltip. In that case <code>showError()</code> function needs to be used to render the error.
+						
+						 <i>Note: Struts 2 framework has templates in server side that gets rendered, but no error container. They do client side validation much like jquery validation plugin. Struts 2 does well for
+						 normal containers but as soon as transfer widgets comes their error system goes haywire. It validates the wrong element-1 and shows error messages attached to the wrong element-2 (horrible)
+<pre>&lt;s:optiontransferselect
+    label="Lucky Numbers"
+    name="leftNumber"
+    list="{'1 - One ', '2 - Two', '3 - Three', '4 - Four', '5 - Five'}"
+    doubleName="rightNumber"
+    doubleList="{'10 - Ten','20 - Twenty','30 - Thirty','40 - Forty','50 - Fifty'}"
+/></pre> 
+						 </i>
+					</dd>
+				 
+				<dt> Main element</dt> 
+				<dd>
+					* Main element of any widget is the [data-spine-prop] and [data-spine-type]. It is mandatory to have an element/div with these two properties.  
+					  This enables to loop through all the elements of a form that correspond to an from control. This makes sure that sub elements within a control are never parsed while getting values in a generic way.
+					  
+					 <code> $("*[data-spine-prop]")</code> //will correctly get all the widgets in a form.
+					  All set value and get value should refer these HTML elements only.
+					  
+					  <pre>
+$("*[data-spine-prop]").each(function(i,v){ //loops through all the elements
+ 	var val = widgetHelper.getValue($(v));
+ 	console.log( val );
+ });
+					  </pre>
+				</dd>
+				
+				<dt>Validation</dt>  
+				<dd>* Validation should be done based on the main element. The problem faced by struts2 above can be easily addressed by using main element concept and error container concept. 
+					  I dont know why they missed it. </dd>
+				<dt>Unified way to set and get</dt>
+				<dd>* Unified way to set and get value is achieved like this. Any elements to show only display properties, internal states are all ignored while dealing with form data.</dd>
+				 
+				<dt>render() </dt> 
+				<dd>* render() function is supposed to render the template and set up the change events within the widget. 
+						In this spider widget to show current value one text field is used appended right next to the slider to show its current value. DOM Events needs to be set up to synchronize the text field's values and the slider values.
+						A change can be triggered by user while doing the sliding. 
+						A change can be triggered by setting value on that slider from another javascript function. It is well knows that setting by javscript does not automatically fires a "change" event. So this is the place to set that up. 
+					</dd>
+				<dt>setValue()</dt>
+				<dd>* setValue() is used to set value. It also is used to set different forms of a value. For example. In the above Slider both number and text can be set on that value.
+					  There is a possibility to show error state of widget in the error container as well.</dd>
+				
+				<dt>getValue()</dt>
+				<dd>* getValue() is used to get a value from a widget control. Additional serialization of internal state can be done here. 
+					  
+					  
+					<code>widgetHelper.setValue($el, '30'); </code><br/>
+						<code> var retDate = widgetHelper.getValue($el);</code></dd>
+			</dl>
+			<div style="clear: left"> <br/></br></div>			
+			<p  >
+				Some concepts turned out to be similar to <a href="https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors">https://github.com/mleibman/SlickGrid/wiki/Writing-custom-cell-editors</a>
+				<br/>Ex.<a href="http://mleibman.github.io/SlickGrid/examples/example3-editing.html">http://mleibman.github.io/SlickGrid/examples/example3-editing.html</a>,
+				<a href="http://mleibman.github.io/SlickGrid/examples/example3a-compound-editors.html">http://mleibman.github.io/SlickGrid/examples/example3a-compound-editors.html</a> </br>
+			</p>
+			
+			<style>
+			.fieldbox {
+			    width: 400px;
+				float:left
+			} 
+.fieldbox label {
+float: left;
+display: inline-block;
+font-weight: bold;
+}
+label.field-label {
+width: 50%;
+font-family: arial;
+display: inline-block;
+box-sizing: border-box;
+}
+			</style>
+			<form action="#" id="frmContainer">
+				<h5>Setting all Values</h5>
+				<div class="row-fluid">
+					<div class="span6">
+				<textarea name="frmCombiDataSet" id="frmCombiDataSet" cols="30" rows="10">
+{
+myslider: 31, 
+myradiogroup: 'M', 
+mytransfer: 'DZ,AL', 
+mymultisel: 'IN,SG'
+}					
+				</textarea>
+						<button type="button" id="btnSetFormData" class="btn btn-active btn-small" >Set json</button>
+						 
+					</div>
+					<div class="span6">
+<pre>$("#btnSetFormData").click(function(){
+	var frmCombiDataSet = eval('"use strict"; var d='+$("#frmCombiDataSet").val()+';d');
+	$.each(frmCombiDataSet, function(i,v){
+		 widgetHelper.setValue($("[data-spine-prop="+i+"]"), v);
+	});
+});</pre>
+					</div>
+				</div>
+				<h5>Getting all Values</h5>				
+				<div class="row-fluid">	
+					<div class="span6">
+						<button type="button" id="btnGetFormData" class="btn btn-active btn-small" >Get json</button>
+						<pre id="frmCombiDataGet"></pre>
+					</div>
+					<div class="span6">
+<pre>var j = {};
+$("[data-spine-prop]", $("#frmContainer")).filter("[data-spine-type]").each(function(i,v){
+	j[$(v).data("spine-prop")] = widgetHelper.getValue($(v))
+});
+$("#frmCombiDataGet").html(JSON.stringify(j,null,3));
+</pre>
+					</div>
+				</div>	
+				<div class="row-fluid">
+					<div class="span12">
+						<h4>Example Slider</h4>
+<pre>var field = {name: "myslider", label: "My Slider Label", capturetype: "slider"};
+widgetHelper.render($("#slidercontainer"),field, "edit");</pre>
+						
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span6"><div id="slidercontainer" style="border:1px solid lightgrey; padding: 10px" class="ui-helper-clearfix"></div></div>
+					<div class="span6">
+						widgetHelper.setValue($("[data-spine-prop=myslider]"), ...): <input type="text"  value="20" id="slidersetVal" /> <button type="button" class="btn btn-small" id="btnSliderSetVal1">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myslider]"),50) :  <button type="button" class="btn btn-small" id="btnSliderSetVal2">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myslider]"),"12") <span class="muted">data conversion</span>:  <button type="button" class="btn btn-small" id="btnSliderSetVal3">setValue()</button> <br/>
+						widgetHelper.getValue($("[data-spine-prop=myslider]")): <button type="button" id="btnSliderGetVal" class="btn btn-small" >getValue()</button> <input type="text" id="slidergetVal"  /> <br/>
+						
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<h4>Example radio group</h4>
+<pre>var field = {name: "myradiogroup", label: "My radio Label", capturetype: "radiogroup", widgetData:"{\"floatLeftProp\": \"Y\",\"radioList\":\"[{val: 'Y', label: 'Yes'},{val: 'M', label:'Male' }]\"}"};
+	widgetHelper.render($("#radiocontainer"),field, "edit");</pre>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span6"><div id="radiocontainer"  style="border:1px solid lightgrey; padding: 10px" class="ui-helper-clearfix"></div></div>
+					<div class="span6">
+						
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"), ...): <input type="text"  value="M" id="rdsetVal" /> <button type="button" class="btn btn-small" id="btnRdSetVal1">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"),"Y") :  <button type="button" class="btn btn-small" id="btnRdSetVal2">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"),"M") : <button type="button" class="btn btn-small" id="btnRdSetVal3">setValue()</button> <br/>
+						widgetHelper.getValue($("[data-spine-prop=myradiogroup]")): <button type="button" id="btnRdGetVal" class="btn btn-small" >getValue()</button> <input type="text" id="rdgetVal"  /> <br/>
+						
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<h4>Example Transfer Widget</h4>
+<pre>field = {name: "mytransfer", label: "My Transfer Label", capturetype: "transferWidget", 
+widgetData:"{\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"datasource\":\"local\",\"localdata\":\"AF,AFGHANISTAN,selected\\nAX,LAND ISLANDS,selected\\nAL,ALBANIA\\nDZ,ALGERIA\"}" };
+
+widgetHelper.render($("#radiocontainer"),field, "edit");</pre>
+					</div>
+					
+				</div>
+				<div class="row-fluid">
+					<div class="span6"><div id="transfercontainer"  style="border:1px solid lightgrey; padding: 10px" class="ui-helper-clearfix"></div></div>
+					<div class="span6">
+						
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"), ...): <input type="text"  value="DZ,AF" id="trsetVal" /> <button type="button" class="btn btn-small" id="btnTrSetVal1">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"),"DZ,AL") :  <button type="button" class="btn btn-small" id="btnTrSetVal2">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=myradiogroup]"),"AL") :  <button type="button" class="btn btn-small" id="btnTrSetVal3">setValue()</button> <br/>
+						widgetHelper.getValue($("[data-spine-prop=myradiogroup]")): <button type="button" id="btnTrGetVal" class="btn btn-small" >getValue()</button> <input type="text" id="trgetVal"  /> <br/>
+						
+					</div>
+				</div>
+				
+				<div class="row-fluid">
+					<div class="span12">
+						<h4>Example Multi-select Widget <small>Ajax + delayed preselect</small></h4>
+				
+<pre>field = {name: "mymultisel", 
+label: "My Multisel Label", 
+capturetype: "multiSelect", 
+widgetData:"{\"datasource\":\"remote\",\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"localdata\":\"AF,AFGHANISTAN\\nSG,SINGAPORE\\nIN,INDIA,selected\\nAL,ALBANIA,selected\\nDZ,ALGERIA\",\"remoteurl\":\"test/country.txt\"}" };
+
+widgetHelper.render($("#multiselcontainer"),field, "edit");
+
+document.getElementsByName("mymultisel")[0].value = 'AF'; //-->To simulate that value was set after form was rendered but before the country.txt would have been loaded by ajax. 
+//Thus to highlight AF delayed preselection is working
+//The other two selected items(IN,AL) are marked as "selected" in country.txt itself
+</pre>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span6"><div id="multiselcontainer"  style="border:1px solid lightgrey; padding: 10px" class="ui-helper-clearfix"></div></div>
+					<div class="span6">
+						
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"), ...): <input type="text"  value="SG" id="mssetVal" /> <button type="button" class="btn btn-small" id="btnMsSetVal1">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"),"IN") :  <button type="button" class="btn btn-small" id="btnMsSetVal2">setValue()</button> <br/>
+						widgetHelper.setValue($("[data-spine-prop=mymultisel]"),"AF,AL") :  <button type="button" class="btn btn-small" id="btnMsSetVal3">setValue()</button> <br/>
+						widgetHelper.getValue($("[data-spine-prop=mymultisel]")): <button type="button" id="btnMsGetVal" class="btn btn-small" >getValue()</button> <input type="text" id="msgetVal"  /> <br/>
+						
+					</div>
+				</div>
+			</form>
 		</div>
 		  
     </div><!--span9 fluid-->

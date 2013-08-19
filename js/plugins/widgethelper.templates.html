@@ -5,7 +5,7 @@
 {{if mandatoryDecorate == 'Y'}}
 <span style='color:red' ><strong>*</strong></span>
 {{/if}}
-</label>  <input type="text" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" style="position:relative;z-index:2" /></div>
+</label>  <input type="text" class="field" data-spine-type="{{:capturetype}}" data-spine-prop="{{:name}}" name="{{:name}}" value="" style="position:relative;z-index:2" /></div>
 	<div class="error-container"></div>
 </div>	
 </script>
@@ -16,7 +16,7 @@
 {{if mandatoryDecorate == 'Y'}}
 <span style='color:red' ><strong>*</strong></span>
 {{/if}}
-</label> <input type="text" name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="{{:defaultValue}}" />
+</label> <input type="text" name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="{{:defaultValue}}" size="{{:maxSize}}"/>
 	<div class="error-container"></div>
 </div>
 </script>
@@ -26,13 +26,13 @@
 <script type="text/template" id="tmpl_text_view">
 <div class="my-displayfield-wrapper">
 	<div class="fieldbox">	<label for="caption" style='display:inline-block;width:50%' class="field-label">{{:label}} 
-	</label><input type='hidden' data-spine-prop="{{:name}}" name='{{:name}}' id='{{:name}}' data-spine-type="displayText" value="{{:defaultValue}}" /> <span type="text" name="disp_{{:name}}"   >{{:defaultValue}}</span></div>
+	</label><input type='hidden' data-spine-prop="{{:name}}" name='{{:name}}' id='{{:name}}' data-spine-type="displayText" value="{{:defaultValue}}" /> <span type="text" id="disp_{{:name}}" name="disp_{{:name}}"   >{{:defaultValue}}</span></div>
 	<div class="error-container"></div>	
 </div>
 </script>
 
 <script type="text/template" id="tmpl_label_view">
- <label for="{{:name}}"  data-spine-prop="{{:name}}" data-spine-type="label" style="line-height:25px" class="field-label" >
+ <label for="{{:name}}"  data-spine-prop="{{:name}}" data-spine-type="label" class="field-label" >
  	{{if defaultValue}}
  		{{:defaultValue}}
  	{{else}}
@@ -77,24 +77,28 @@
 <script type="text/template" id="tmpl_slider_edit">
 <div class="fieldbox">	
    <label for="{{:name}}" class="field-label">{{:label}}</label> 
-   <div type="text" name="disp_{{:name}}" data-spine-prop="disp_{{:name}}" data-spine-type="slider" style="width:150px;display: inline-block"  value="Field Details" ></div>
-   <input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" size="2" maxlength="10" />
+   <div type="text" name="disp_{{:name}}" data-spine-prop="disp_{{:name}}"  style="width:150px;display: inline-block"  value="Field Details" ></div>
+   <input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="slider" size="2" style="width:50px" maxlength="10" readOnly="readOnly" />
    <div class="error-container"></div>
 </div>
 </script>
 
 <script type="text/template" id="tmpl_check_edit">
-<div class="fieldbox">	<label for="{{:name}}" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox"  value="Y" />
-<input type="text"name="hid_{{:name}}" data-spine-prop="hid_{{:name}}" data-spine-type="checkbox" size="1" maxlength="10" />
+<div class="fieldbox">	<label for="{{:name}}" class="field-label">{{:label}}  </label> <input type="checkbox" name="chk_{{:name}}" data-spine-prop="chk_{{:name}}" data-spine-type="checkbox"  value="Y" />
+<input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="checkbox" size="1" maxlength="10" />
 	<div class="error-container"></div>
 </div>
 </script>
 
 <script type="text/template" id="tmpl_radiogroup_edit">
-<div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> 
+<div class="fieldbox">	<label for="caption" class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label> 
 
 <div style="float:left;width:200px" class="ui-helper-clearfix">
-	<ul style="display:block; clear:both; list-style:none;padding:0px; margin: 0px" data-spine-prop="disp_{{:name}}" data-spine-type="disp_radiogroup">
+	<ul style="display:block; clear:both; list-style:none;padding:0px; margin: 0px" data-spine-prop="disp_{{:name}}" >
 	{{for  radioList }} 
 	
 	<li > <input type="radio" name="{{: ~root.name}}" id="{{: #index}}_{{: ~root.name}}"   value="{{:val}}" /> 
@@ -102,7 +106,7 @@
 	
 	{{/for}}
 	</ul>
-	<input type="text"name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="radiogroup" size="1" maxlength="10" style="float: left"/>
+	<input type="text" name="{{:name}}" id="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="radiogroup" size="1" maxlength="10" style="float: left; width:25px" readOnly="readOnly"/>
 </div>
 	<div class="error-container"></div>
 
@@ -117,7 +121,7 @@
 {{if mandatoryDecorate == 'Y'}}
 <span style='color:red' ><strong>*</strong></span>
 {{/if}}
-</label> <select name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="text" value="" ></select>
+</label> <select name="{{:name}}" id="{{:name}}" class="{{:cssclass}}" data-spine-prop="{{:name}}" data-spine-type="select" value="" ></select>
 	<div class="error-container"></div>
 </div>
 </script>
@@ -126,5 +130,57 @@
 <script type="text/template" id="tmpl_button_view">
 <div class="fieldbox">	<label for="caption" class="field-label">{{:label}}  </label> <input type="checkbox" name="{{:name}}" data-spine-prop="{{:name}}" data-spine-type="button"  value="Field Details" ></span>
 	<div class="error-container"></div>
+</div>
+</script>
+
+<script type="text/template" id="tmpl_transferWidget_edit">
+<div class="fieldbox">	
+<table >
+<tr>
+	<td colspan="2">
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label>
+	</td>
+</tr>
+<tr>
+	<td><span class="field">Select </span></td>
+	<td></td>
+	<td><span class="field">Selected</span></td>
+</tr>
+<tr><td width="40%"> <select name="from_{{:name}}" id="from_{{:name}}" class="{{:cssclass}}"   multiple="multiple" value="" style="width:100%;height:100%" ></select> </td>
+	<td width="10%"> 
+		<button type="button" id="btn{{:name}}Add"       style="width:100%" >Add</button>		
+		<button type="button" id="btn{{:name}}Remove"    style="width:100%" >Remove</button>		
+		<button type="button" id="btn{{:name}}AddAll"    style="width:100%" >Add All</button>		
+		<button type="button" id="btn{{:name}}RemoveAll" style="width:100%" >Remove All</button>		
+	</td>
+	<td width="40%"> <select name="selected_{{:name}}" id="selected_{{:name}}" class="{{:cssclass}}" multiple="multiple"  value="" style="width:100%;height:100%"></select> </td>
+</tr>
+<tr>
+	<td colspan="3">
+	  <input type="text"  data-spine-type="transferWidget" name="{{:name}}" data-spine-prop="{{:name}}"  />
+	  <div class="error-container"></div></td>
+</tr>
+	
+</div>
+</script>
+<script type="text/template" id="tmpl_multiselect_edit">
+<div class="fieldbox">	
+
+<label for="{{:name}}"  style='display:inline-block;width:50%' class="field-label">{{:label}} 
+{{if mandatoryDecorate == 'Y'}}
+<span style='color:red' ><strong>*</strong></span>
+{{/if}}
+</label>
+ <select name="from_{{:name}}" id="from_{{:name}}" class="{{:cssclass}}"   multiple="multiple" value="" style="width:100%;height:100%" ></select> </td>
+
+
+	  <input type="text"  data-spine-type="multiSelect" name="{{:name}}" data-spine-prop="{{:name}}"  />
+	  <div class="error-container"></div></td>
+
+	
 </div>
 </script>
