@@ -297,7 +297,7 @@ var ds = null;
 					$("#rdgetVal").val( widgetHelper.getValue($("[data-spine-prop=myradiogroup]"))  );
 				});
 				
-				$.getScript("../js/plugins/jquery.transfer.js", function(){ console.log('loaded'); 
+				require(["js/plugins/jquery.transfer.js"], function(){ console.log('loaded'); 
 					field = {name: "mytransfer", label: "My Transfer Label", capturetype: "transferWidget", widgetData:"{\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"datasource\":\"local\",\"localdata\":\"AF,AFGHANISTAN,selected\\nAX,LAND ISLANDS,selected\\nAL,ALBANIA\\nDZ,ALGERIA\"}" };
 					widgetHelper.render($("#transfercontainer"),field, "edit");
 
@@ -843,7 +843,8 @@ widgetHelper.render($("#slidercontainer"),field, "edit");</pre>
 					<div class="span12">
 						<h4>Example radio group</h4>
 <pre>var field = {name: "myradiogroup", label: "My radio Label", capturetype: "radiogroup", widgetData:"{\"floatLeftProp\": \"Y\",\"radioList\":\"[{val: 'Y', label: 'Yes'},{val: 'M', label:'Male' }]\"}"};
-	widgetHelper.render($("#radiocontainer"),field, "edit");</pre>
+
+widgetHelper.render($("#radiocontainer"),field, "edit");</pre>
 					</div>
 				</div>
 				<div class="row-fluid">
@@ -889,8 +890,8 @@ capturetype: "multiSelect",
 widgetData:"{\"datasource\":\"remote\",\"unHidePanelData\":\"\",\"onChangeFnName\":\"\",\"onFocusFnName\":\"\",\"localdata\":\"AF,AFGHANISTAN\\nSG,SINGAPORE\\nIN,INDIA,selected\\nAL,ALBANIA,selected\\nDZ,ALGERIA\",\"remoteurl\":\"test/country.txt\"}" };
 
 widgetHelper.render($("#multiselcontainer"),field, "edit");
-
-document.getElementsByName("mymultisel")[0].value = 'AF'; //-->To simulate that value was set after form was rendered but before the country.txt would have been loaded by ajax. 
+//-->To simulate that value was set after form was rendered but before the country.txt would have been loaded by ajax.
+document.getElementsByName("mymultisel")[0].value = 'AF'; 
 //Thus to highlight AF delayed preselection is working
 //The other two selected items(IN,AL) are marked as "selected" in country.txt itself
 </pre>

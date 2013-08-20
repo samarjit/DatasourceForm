@@ -993,16 +993,17 @@ $.fn.addCssRule = function (rule, id){
 					{
 						
 						fieldWidgetHid.val("");
+						var ar = [];
 						fieldWidgetSelectFrom.find("option")
 							.each(function(i, v)
 							  {
 								if (v.selected == true)
 								{
-									that.setValue(fieldWidgetHid, v.value);
+									ar.push( v.value);
 								}
 			
 							});
-						
+						fieldWidgetHid.val(ar.join(","));
 						require([screenmeta.screenData.screenMeta.JS_FILE], function(screenJs)
 						{
 							if(screenJs != undefined && widgetData.onChangeFnName != undefined && widgetData.onChangeFnName != "")
