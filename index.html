@@ -374,7 +374,7 @@ var ds = null;
 			    $('.bs-docs-sidenav a').each(function () {
 			        var currLink = $(this);
 			        var refElement = $(currLink.attr("href"));
-			        if (!!refElement.position() && refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+			        if (!!refElement.position() && refElement.position().top <= scrollPos && refElement.position().top + refElement.outerHeight(true) > scrollPos) {
 			            $('.bs-docs-sidenav li a').parent().removeClass("active");
 			            currLink.parent().addClass("active");
 			        }
@@ -428,9 +428,10 @@ var ds = null;
 	<p>The same datasource can be plugged into a datagrid view which may contain pagination or a simple table. This data grid can be easily modified to create updatatable rows of data</p>
 
 	<em>Note: This is not a one-way or two-way data binding library like angularjs or knockout or backbone models. Data needs to be read manually and written manually from/to the datasource.</em>
-
-	Data binding is not a problem to implement, in fact one-way data binding should be very trivial to implement since we already have included observable models. If you want to implement data binding you will need to make entire datasource observable, and then in the event handler call `setValue` to all the form controls.
-	
+	 
+	<p>Data binding is not a problem to implement, in fact one-way data binding should be very trivial to implement since we already have included observable models. If you want to implement data binding you will need to make entire datasource observable, and then in the event handler call `setValue` to all the form controls. However nice effect can be achieved by attaching a datasource with multiple forms. Updating all forms setValue() will result in same data appear in multiple places. We have not implemented data updating automatically, but infrastructure is there to implement one-way data binding. To avoid too many events on a page this was chosen design.</p>
+	<p>The library is basically a wrapper around any ui library of your choice. Here in most places we have used jQuery-ui, but you can mix different libraries and create a wrapper which uses the compliant our interchange format. Details of structure of widget can be seen in <a href="#toc8"> Form Controls Widget</a></p>
+	<p>As you might have guessed that there will be huge amount of DOM manipulation when we do form view updates. This would have been a major concern if every model update would create a cascade of form updates. But in general there are very few user triggered updates. Some might argue this is prehistoric framework as compared to angularjs or reactjs. But in reality this is very small and very lightweight for browsers. </p>
 </main>
 <section id="example">
 	 <a name="example"></a>
