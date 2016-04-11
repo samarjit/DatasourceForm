@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Datasource examples</title>
+	<title>Datasource Form</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+	<meta property="og:type" content="website" /> 
+	<meta name="hostname" content="samarjit.github.io">
+	<meta name="twitter:title" property="og:title" itemprop="title name" content="Uniform form control, uniform data interchange format, connected datasource" />
+
+	<meta name="description" content="Create form controls which reads and writes uniform format of data, create datasource and connect to these controls">
+	<meta name="twitter:description" property="og:description" itemprop="description" content="Create form controls which reads and writes uniform format of data, create datasource and connect to these controls">
 	<script src="js/require.js"></script>
 	<script src="js/requireconfig.js"></script>
 
@@ -18,8 +26,8 @@
 <script type="text/javascript" charset="utf-8" data-requirecontext="_" data-requiremodule="uidataviewlocal" src="./test/../js/plugins/jquery.ui.dataviewlocal.js"></script>
 <script type="text/javascript" charset="utf-8" data-requirecontext="_" data-requiremodule="datasource" src="./test/../js/plugins/jquery.uix.datasource.js"></script></head>
 
-	<link rel="stylesheet" href="css/plugins/jquery-ui-1.10.0.css">
-	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
+	<link rel="stylesheet" href="css/plugins/jquery-ui.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
 	<style>
 	ul,li{
 	padding: 0;
@@ -37,9 +45,7 @@
 		-webkit-border-radius: 6px;
 		-moz-border-radius: 6px;
 		border-radius: 6px;
-		-webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
-		-moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
-		box-shadow: 0 1px 4px rgba(0,0,0,.065);
+		 
 	}
 	
 	.bs-docs-sidenav > li >a {
@@ -47,19 +53,19 @@
 	  width: 190px \9;
 	  margin: 0 0 -1px;
 	  padding: 8px 14px;
-	  border: 1px solid #e5e5e5;
+	  border-right: 2px solid #fff;
 	}
-	.bs-docs-sidenav > li:first-child > a {
+	/* .bs-docs-sidenav > li:first-child > a {
 		-webkit-border-radius: 6px 6px 0 0;
 		-moz-border-radius: 6px 6px 0 0;
 		border-radius: 6px 6px 0 0;
 	}
-
-.bs-docs-sidenav > li:last-child > a {
-	-webkit-border-radius: 0 0 6px 6px;
-		-moz-border-radius: 0 0 6px 6px;
-			border-radius: 0 0 6px 6px;
-}
+	
+	.bs-docs-sidenav > li:last-child > a {
+		-webkit-border-radius: 0 0 6px 6px;
+			-moz-border-radius: 0 0 6px 6px;
+				border-radius: 0 0 6px 6px;
+	} */
 
 	
 	 
@@ -76,10 +82,12 @@
 .bs-docs-sidenav a:hover .icon-chevron-right {
   opacity: .5;
 }
-.bs-docs-sidenav .active .icon-chevron-right,
-.bs-docs-sidenav .active a:hover .icon-chevron-right {
-  background-image: url(../img/glyphicons-halflings-white.png);
+.bs-docs-sidenav li.active a,
+.bs-docs-sidenav li.active  a{
+  /* background-image: url(https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/img/glyphicons-halflings-white.png); */
   opacity: 1;
+ 
+  border-right-color: red;
 }
 .bs-docs-sidenav.affix {
   top: 40px;
@@ -90,7 +98,11 @@
   bottom: 270px;
 }
 
-
+section{
+	background-color: #EAEBFF;
+	padding: 40px;
+	margin-bottom: 50px;
+}
 	</style>
 	
 	<script>
@@ -124,7 +136,7 @@ var data3= [{
 var ds = null;
 	require.config({baseUrl: "./test" });
 		//require(['jqueryui','datasource', 'jsrobservable','widgethelper', 'gridpager'], 
-		$(document).ready(function(){
+	$(document).ready(function(){
 
 		reader = new SchemaReader({
 			resultFields: [{name: "name",mapping : "name"} , {name: "email", mapping: "email"}]
@@ -356,7 +368,22 @@ var ds = null;
 				});
 				//{"datasource":"remote","unHidePanelData":"","onChangeFnName":"","onFocusFnName":"","localdata":"AF,AFGHANISTAN\nSG,SINGAPORE\nIN,INDIA,selected\nAL,ALBANIA,selected\nDZ,ALGERIA","remoteurl":"country.json"}
 			});	
-				
+			
+			function onScroll(event){
+			    var scrollPos = $(document).scrollTop();
+			    $('.bs-docs-sidenav a').each(function () {
+			        var currLink = $(this);
+			        var refElement = $(currLink.attr("href"));
+			        if (!!refElement.position() && refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+			            $('.bs-docs-sidenav li a').parent().removeClass("active");
+			            currLink.parent().addClass("active");
+			        }
+			        else{
+			            currLink.parent().removeClass("active");
+			        }
+			    });
+			}	
+			$(document).on('scroll',onScroll);
 		});
 	</script>
 </head>
@@ -364,7 +391,7 @@ var ds = null;
 <div class="container-fluid">
   <div class="row-fluid">
    
-	<div class="span3 bs-docs-sidebar">
+	<div class="col-lg-2 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav affix">
           <li class="active"><a href="#main"><i class="icon-chevron-right"></i> Main</a></li>
           <li><a href="#example"><i class="icon-chevron-right"></i>Try out</a></li>
@@ -378,7 +405,7 @@ var ds = null;
           <li><a href="#toc8"><i class="icon-chevron-right"></i> Form Controls Widget</a></li>
         </ul>
       </div>
-    <div class="span8 ">
+    <div class="col-lg-10 ">
      <div class="section">
 		<a name="main"></a>
 		<h3>This is a local datasource example.</h3>
@@ -387,7 +414,25 @@ var ds = null;
 		<h4>
 			<a href="https://github.com/samarjit/DatasourceForm/">Original Github repo</a>
 		</h4>
-		
+<main id="main">
+	<h4>Have you ever faced a situation where different form controls create different data, and reading and writing data to from these form controls need to be controlled using messy scripts? </h4>
+
+	<p>It is common, group of radio buttons creating array data, checkbox creates true/false on/off Y/N different values, and single select creates single string data, while a multi-select creates array data. </p>
+
+	<p>Wouldn't it be nice if all form controls accepted and produced same format of data. If you agree please read on.</p>
+
+	<p>The basis of this Datasource form controls is same format of data structure is produced and consumed by every form control. This makes reading and writing data process common across controls. Controls can be easily added and removed from forms. Even there can be fair amount of backend code which can be common. </p>
+
+	<p>Second comes datasources. The datasource is form control agnostic. Means it will create data in a format which can be linked to a form without having to worry what form control is being used to visualize the data. The form with all the controls can be serialized into a data format which is same as the datasource format.</p>
+	
+	<p>The same datasource can be plugged into a datagrid view which may contain pagination or a simple table. This data grid can be easily modified to create updatatable rows of data</p>
+
+	<em>Note: This is not a one-way or two-way data binding library like angularjs or knockout or backbone models. Data needs to be read manually and written manually from/to the datasource.</em>
+
+	Data binding is not a problem to implement, in fact one-way data binding should be very trivial to implement since we already have included observable models. If you want to implement data binding you will need to make entire datasource observable, and then in the event handler call `setValue` to all the form controls.
+	
+</main>
+<section id="example">
 	 <a name="example"></a>
 		<h3 >Try out</h3>
 Default options
@@ -470,9 +515,9 @@ $("#transformer1").text(JSON.stringify(reader.options.resultFields));
 $("#result1").text(JSON.stringify(res1));
 </pre>	
 
-
+</section>
 			
-		
+<section id="toc1">		
 		<a name="toc1"></a>
 			<h3>SchemaReader</h3>
 			This section shows filtering
@@ -494,12 +539,18 @@ var data1= [{
 	
 Transform 1 <br/> reader.options.resultFields:<pre id="transformer1">			</pre>
 <h4>Result1</h4>		<pre id="result1"></pre>
+</section>
 
+
+<section id="toc2">
 <a name="toc2">Data Mapping shortcut</a><br/>
 Transform 2 <br/> reader.options.resultFields:<pre id="transformer2">			</pre>
 <h4>Result2</h4>:		<pre id="result2"></pre>
 
+</section>
 
+
+<section id="toc3">
 <a name="toc3">Data Mapping </a>
 <pre>
 var data3= [{
@@ -517,7 +568,10 @@ var data3= [{
 
 Transform 3 Options <br/> reader.options.resultFields:<pre id="transformer3">			</pre>
 <h4>Result3</h4>		<pre id="result3"></pre>
+</section>
 
+
+<section id="toc7">
 <a name="toc7" >For data which is not an array returned from server </a> <br/>
 The rootList option is used to extract this array. Internally it uses jsonPath to extact the data
 
@@ -533,8 +587,10 @@ reader.options.datatype="json";
 reader.read(data7);
 </pre>
 <h4>Result</h4> <pre id="result7"></pre>
+</section>
 
 
+<section id="toc4">
 <a name="toc4">CSV Reading with filtering </a> <br/>
 Data:
 CSV reader is quite powerful one. 
@@ -546,7 +602,9 @@ Transform options <br/> resultFields :<pre id="transformer4"></pre>
 Configuring CSV datatype: <pre >reader.options.datatype="csv";</pre>
 
 <h4>Result</h4> <pre id="result4"></pre>
+</section>
 
+<section id="toc5">
 <a name="toc5">Custom Text or CSV Reading specified field separator (#) and record sep (!) </a> <br/>
 Data:
 CSV reader with arbritrary record delimiter and arbritary record seperator.
@@ -563,9 +621,9 @@ reader.options.csvRecordSep = "!";
 </pre>
 
 <h4>Result</h4> <pre id="result5"></pre>
+</section>
 
-
-
+<section id="toc6">
 <h3>DataSource</h3>
 <a name="toc6">Local datasource </a>
 Data6<pre id="data6"></pre>
@@ -585,7 +643,9 @@ Current Obj <code id="dynresult"></code>
 <div id="dynform" class="ui-helper-clearfix"></div>
 <div id="dynform_pager"></div>
 		</div>
-		
+</section>
+
+<section id="toc8">		
 		<div id="widgetcontrol">
 			<a name="toc8"></a>
 			<h3>Form Control Widgets</h3>
@@ -910,14 +970,46 @@ document.getElementsByName("mymultisel")[0].value = 'AF';
 				</div>
 			</form>
 		</div>
-		  
+		</section>  
+
+		<!-- disqus start-->
+		<div id="disqus_thread"></div>
+		<script>
+		    /**
+		     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+		     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+		     */
+		    
+		    var disqus_config = function () {
+		        this.page.url = 'http://samarjit.github.io/DatasourceForm/';  // Replace PAGE_URL with your page's canonical URL variable
+		        this.page.identifier = 'DatasourceForm'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+		    };
+		    
+		    (function() {  // DON'T EDIT BELOW THIS LINE
+		        var d = document, s = d.createElement('script');
+		        
+		        s.src = '//datasourceform.disqus.com/embed.js';
+		        
+		        s.setAttribute('data-timestamp', +new Date());
+		        (d.head || d.body).appendChild(s);
+		    })();
+		</script>
+		<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>	
+		<script id="dsq-count-scr" src="//datasourceform.disqus.com/count.js" async></script>
+		<a href="hhttp://samarjit.github.io/DatasourceForm/index.html#disqus_thread">Link</a>
+		<!-- disqus end-->
+
+
     </div><!--span9 fluid-->
 	  
   </div><!--row fluid-->
   
 </div><!--container fluid-->
  
-<div id="mytemplates"></div>
-	
+<div id="mytemplates"></div> <!--contains dynamically generated tempaltes of form-controls-->
+
+
+ 
+
 </body>
 </html>
