@@ -1,6 +1,6 @@
 define({
 	loadCss: function(csslist, theme, callback){
-		var cssmap = {jqueryui: ["http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css",
+		var cssmap = {jqueryui: ["plugins/jquery-ui.css",
 		                         "plugins/jquery.ui.menu.css","plugins/jquery.ui.menubar.css"
 		                         ],
 				jqgrid:["plugins/ui.jqgrid.css","plugins/jquerygrid/jquery.ui.grid.css"],
@@ -8,7 +8,7 @@ define({
 				idct:["idct/body.css","idct/tabmenu.css"],
 				layout:["plugins/jquery-layout.css"],
 				codemirror:["plugins/codemirror.css"],
-				uigrid: ["http://view.jqueryui.com/grid/themes/base/jquery.ui.grid.css"]
+				uigrid: ["plugins/jquery.ui.grid.css"]
 				};
 		 
 			$('link').remove();
