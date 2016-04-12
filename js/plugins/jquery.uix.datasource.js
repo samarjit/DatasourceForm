@@ -30,7 +30,7 @@
 							var tmp = field;
 							field = {name: tmp, mapping: tmp};
 						}
-						if (field.mapping && typeof field.mapping && window[field.mapping]) {
+						if (field.mapping && typeof (field.mapping) == 'function' && window[field.mapping]) {
 							field.mapping = window[field.mapping];
 						}
 
